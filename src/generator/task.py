@@ -27,8 +27,11 @@ class TaskSet():
     def append(self, task):
         self.tasks.append(task)
     
-    def get_tasks(self, state_num=None) :
-        return [task.get_task(state_num) for task in self.tasks]
+    def get_tasks(self, state_num=None, sort=False, desc=True) :
+        tasks = [task.get_task(state_num) for task in self.tasks] 
+        if sort:
+            tasks.sort(key=lambda x: x[1]/x[0], reverse=desc)
+        return tasks
 
     def __str__(self):
         return "TaskSet:\n{}".format(self.tasks)

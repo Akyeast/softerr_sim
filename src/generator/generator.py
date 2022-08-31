@@ -1,5 +1,6 @@
 import random 
 import json
+import math
 from utils import UUniFastDiscard
 from task import Task, TaskSet
 
@@ -17,7 +18,7 @@ def generate_tasksets():
         tasks = []
         for task_util in task_set :
             period = random.randint(period_from, period_to) # both included
-            execution = int(task_util * period)
+            execution = math.ceil(task_util * period)
             criticality = [1 if random.random() < critical_prob else 0 for _ in range(cfg['num_states'])]        
             tasks.append(Task(period, execution, criticality))
 
@@ -27,4 +28,4 @@ def generate_tasksets():
 
 if __name__ == '__main__':
     tasks = generate_tasksets()
-    print(tasks)
+    print(tasks[0].get_tasks(sort=True, desc=True))
