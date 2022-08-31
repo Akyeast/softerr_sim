@@ -3,6 +3,6 @@
     "num_tasks": 10,
     "critical_prob": 0.1,
     "utilization": 2.0,
-    "period": [10, 1000],
+    "period": [10, 100],
     "num_states": 5
 }
