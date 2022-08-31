@@ -21,3 +21,11 @@ def get_PRM_bound(core_utils) :
             PRM bound
     """
     return [1.0-core_util for core_util in core_utils]
+
+def argmin(lst, array=False):
+    srt_lst = sorted(range(len(lst)), key=lambda k: lst[k])
+    
+    if array:
+        return srt_lst
+    else :
+        return srt_lst[0]

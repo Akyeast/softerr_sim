@@ -7,6 +7,7 @@ def main():
 
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
+        print(stateless_ts)
         num_core_LS = get_num_core_LS(stateless_ts)
         num_core_ours = get_num_core_ours(stateless_ts)
 
