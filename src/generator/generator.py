@@ -1,8 +1,8 @@
 import random 
 import json
 import math
-from utils import UUniFastDiscard
-from task import Task, TaskSet
+from generator.utils import UUniFastDiscard
+from generator.task import Task, TaskSet
 
 def generate_tasksets():
     with open('cfg/task_cfg.json', 'r') as f:
