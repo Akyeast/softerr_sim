@@ -1,4 +1,5 @@
 import random
+import json
 
 def UUniFastDiscard(n, u, nsets):
     sets = []
@@ -21,14 +22,16 @@ def UUniFastDiscard(n, u, nsets):
 def SimpleRandom(n, nsets):
     """
         Simple Random algorithm
-        generates task with utilization [0, 0.5]
+        generates task with utilization [0, task_max_utilization]
     """
+    with open('cfg/task_cfg.json', 'r') as f:
+        cfg = json.load(f)
     sets = []
 
     while len(sets) < nsets:
         utilizations = []
         for i in range(n):
-            utilizations.append(random.random() / 2.0)
+            utilizations.append(random.random() * cfg['task_max_utilization'])
         sets.append(utilizations)
 
     return sets
