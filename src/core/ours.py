@@ -2,7 +2,7 @@ import json
 from core.mapping import critical2core
 from core.utils import get_minimum_core, get_PRM_bound
 from core.task_sche_check import assign_nc2PRM
-from core.rta import rta_all
+from core.rta import rta_all, rta_all_single
 
 with open('cfg/prm_cfg.json', 'r') as f:
     cfg = json.load(f)
@@ -45,7 +45,8 @@ def assign_tasks(core, c_tasks, nc_tasks):
 def check_fault_case(tasks, cores):
     for i in range(len(cores)):
         assigned_tasks = [t[:3] for t in filter(lambda x: x[3]==i, tasks)]
-        schedulability = rta_all(assigned_tasks, num_core=1, fault=True)
+        schedulability = rta_all_single(assigned_tasks, fault=True)
+        # schedulability = rta_all(assigned_tasks, num_core=1, fault=True)
         if not schedulability:
             return False
     else:

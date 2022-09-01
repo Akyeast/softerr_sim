@@ -1,4 +1,7 @@
 import math
+from xmlrpc.client import Fault
+
+from core.task_sche_check import lcm
 
 def rta_all(task_set, num_core, fault=False):
     """
@@ -11,8 +14,61 @@ def rta_all(task_set, num_core, fault=False):
     else:
         return True
 
+def rta_all_single(task_set, fault=False):
+    """
+        Input: [(period, execution, critical), (5, 3, 1), ...]
+        Output: boolean (True if all tasks are schedulable, False otherwise)
+    """
+    for i in range(len(task_set)):
+        if not rta_task_single(task_set, i, fault):
+            return False
+    else:
+        return True
 
-def rta_task(task_set, index, num_core, fault=None):
+def rta_task_single(task_set, index, fault=False):
+    task = task_set[index]
+    interfere_tasks = task_set[:index] + task_set[index+1:]
+    max_rt = 0.0
+
+    if fault :
+        max_rt += task[1] + max([t[1] for t in task_set])
+
+    # TODO: fix this range
+    for a in range(max([t[0] for t in interfere_tasks]+[0])):
+    # for a in range(lcm([t[0] for t in interfere_tasks])):
+        sum_interference = sum([t[1] for t in interfere_tasks if t[0] <= a+task[0]])
+        response_time = sum_interference + (task[1] if s_i(a, task)==0 else 0)
+
+        while response_time <= task[0]:
+            new_rt = workload_bound_single(a, response_time, task, interfere_tasks)
+            if fault:
+                new_rt += max([t[1] for t in task_set])
+            if new_rt == response_time:
+                break
+            response_time = new_rt
+
+        if response_time-a > max_rt:
+            max_rt = response_time-a
+
+    return max(task[1], max_rt) < task[0]
+
+def s_i(a, task) :
+    return a - math.floor(a/task[0])*task[0]
+
+def workload_bound_single(start, interval, task, interfere_tasks):
+    """
+        Input: start => integer, interval => integer, task => (period, execution, critical), interfere_tasks => [(period, execution, critical), (5, 3, 1), ...]
+        output: workload bound
+    """
+    bound = 0.0
+    for t in interfere_tasks :
+        if t[0] <= start + task[0] :
+            released = s_i(start, task)
+            delta = min(math.ceil((interval-released)/task[0]), 1+math.floor(start/task[0])) if interval >= released else 0
+            bound += min(math.ceil(interval/t[0]), 1+math.floor((start+task[0]-t[0])/t[0]))*t[1] + delta*task[1]
+    return bound
+
+def rta_task(task_set, index, num_core, fault=False):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...], task_index, number of core
         Output: boolean (True if task_set[index] is schedulable, False otherwise)
