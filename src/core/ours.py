@@ -20,11 +20,12 @@ def get_num_core_ours(tasks):
     schedulable = False
 
     while not schedulable:
-        schedulable, prms, mapped_nc = assign_tasks(core, c_tasks, nc_tasks)
-        core += 2
+        schedulable, prms, mapped_tasks = assign_tasks(core, c_tasks, nc_tasks)
+        if not schedulable:
+            core += 2
 
     print("PRMs: ", prms)
-    print("Mapped NC tasks: ", mapped_nc)
+    print("Mapped all tasks: ", mapped_tasks)
 
     return core
 

@@ -8,8 +8,9 @@ class Demand() :
         sum_utilization = sum([task[1] / task[0] for task in self.tasks])
         max_exct = max([task[1] for task in self.tasks])
         slope = (2*theta) / pi
-        B = theta * (2 - slope)
-        return (max_exct + 2 * self.tasks[k][1] + B) / (slope - sum_utilization)
+        B = 2 * slope * (pi - theta)
+        D = self.tasks[k][0] * (slope - sum_utilization)
+        return (max_exct + 2 * self.tasks[k][1] + B - D) / (slope - sum_utilization)
 
     def number_of_jobs(self, t, i): # N_i(t)
         return math.floor(t / self.tasks[i][0])

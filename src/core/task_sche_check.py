@@ -23,7 +23,7 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
             ## schedulability check
             demand = Demand(groups)
             theta = get_optimal_theta(pi, demand)
-            print("PRM parameters: ", pi, theta, prm_bounds[index])
+            # print("optimal parameters: {}, {}, {}\n\n\n".format(pi, theta, prm_bounds[index]))
             if theta / pi <= prm_bounds[index]:
                 prms[index] = groups
                 mapped_tasks.append((*task, index))
@@ -39,13 +39,16 @@ def get_minimum_theta(t, pi, dbf):
 
 def get_optimal_theta(pi, demand):
     maximum_theta = 0
-    for point in range(1, lcm([task[0] for task in demand.tasks])+1):
-        for i in range(len(demand.tasks)):
-            if demand.tasks[i][0] >= point :
-                continue
+
+    for i in range(len(demand.tasks)):
+        for point in range(demand.tasks[i][0], lcm([task[0] for task in demand.tasks])+1):
             theta = get_minimum_theta(point, pi, demand.demand(point, i))
             if theta > maximum_theta:
                 maximum_theta = theta
+
+            # print(r'points {} and maximum A_k {} by theta {}'.format(point, demand.maximum_A_k(i, maximum_theta, pi), maximum_theta))
+            if demand.maximum_A_k(i, maximum_theta, pi) <= point:
+                break
     return maximum_theta
 
 def lcm(lst):
