@@ -20,7 +20,7 @@ def get_num_core_LS(task_set, method='deadline'):
 
     return min_core * 2
 
-def check_schedulability(task_set, num_core, check_method='deadline'):
+def check_schedulability(task_set, num_core, check_method):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...]
         Output: True if schedulable, False otherwise
@@ -46,4 +46,4 @@ def check_schedulability_deadline(task_set, num_core):
         return True
 
 def check_schedulability_rta(task_set, num_core):
-    return rta_all(task_set, num_core)
+    return rta_all(task_set, num_core, fault=True)

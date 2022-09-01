@@ -1,24 +1,12 @@
 import math
 
-def rta_with_fault(task_set, num_core=1):
-    """
-        Input: [(period, execution, critical, core_index), (5, 3, 1, 0), ...]
-        Output: boolean (True if all tasks are schedulable, False otherwise)
-    """
-    for i in range(len(task_set)):
-        if not rta_task(task_set, i, num_core, fault=True):
-            return False
-    else:
-        return True
-
-
-def rta_all(task_set, num_core):
+def rta_all(task_set, num_core, fault=False):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...]
         Output: boolean (True if all tasks are schedulable, False otherwise)
     """
     for i in range(len(task_set)):
-        if not rta_task(task_set, i, num_core):
+        if not rta_task(task_set, i, num_core, fault):
             return False
     else:
         return True
@@ -42,7 +30,7 @@ def rta_task(task_set, index, num_core, fault=None):
         all_interfere = math.floor(sum_interfere/ num_core)
 
         if fault:
-            new_rt = task[1] + math.floor(all_interfere / num_core) + max([t[1] for t in task_set])
+            new_rt = task[1] + math.floor((all_interfere + max([t[1] for t in task_set])) / num_core)
         else :
             new_rt = task[1] + math.floor(all_interfere / num_core)
 
