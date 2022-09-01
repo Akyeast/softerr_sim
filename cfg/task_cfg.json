@@ -1,7 +1,7 @@
 {
     "num_task_sets": 1,
     "num_tasks": 100,
-    "critical_prob": 0.1,
+    "critical_prob": 0.5,
     "task_set_utilization": 30.0,
     "period": [10, 100],
     "num_states": 5,
