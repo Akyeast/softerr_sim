@@ -16,5 +16,19 @@ def UUniFastDiscard(n, u, nsets):
         # HAEJOO: change this because heavy task(util>0.5) cannot be re-runed.
         if all(ut <= 0.5 for ut in utilizations):
             sets.append(utilizations)
+    return sets
+
+def SimpleRandom(n, u, nsets):
+    """
+        Simple Random algorithm
+        generates task with utilization [0, 0.5]
+    """
+    sets = []
+
+    while len(sets) < nsets:
+        utilizations = []
+        for i in range(n):
+            utilizations.append(random.random() / 2.0)
+        sets.append(utilizations)
 
     return sets
