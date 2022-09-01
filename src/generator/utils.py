@@ -18,7 +18,7 @@ def UUniFastDiscard(n, u, nsets):
             sets.append(utilizations)
     return sets
 
-def SimpleRandom(n, u, nsets):
+def SimpleRandom(n, nsets):
     """
         Simple Random algorithm
         generates task with utilization [0, 0.5]

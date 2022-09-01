@@ -8,8 +8,8 @@ def generate_tasksets():
     with open('cfg/task_cfg.json', 'r') as f:
         cfg = json.load(f)
     
-    # tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['utilization'], cfg['num_task_sets'])
-    tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['utilization'], cfg['num_task_sets'])
+    # tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'])
+    tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'])
     period_from, period_to = cfg['period']
     critical_prob = cfg['critical_prob']
 
