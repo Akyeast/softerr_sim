@@ -1,5 +1,16 @@
 import math
-from urllib import response
+
+def rta_with_fault(task_set, num_core=1):
+    """
+        Input: [(period, execution, critical, core_index), (5, 3, 1, 0), ...]
+        Output: boolean (True if all tasks are schedulable, False otherwise)
+    """
+    for i in range(len(task_set)):
+        if not rta_task(task_set, i, num_core, fault=True):
+            return False
+    else:
+        return True
+
 
 def rta_all(task_set, num_core):
     """
@@ -13,7 +24,7 @@ def rta_all(task_set, num_core):
         return True
 
 
-def rta_task(task_set, index, num_core):
+def rta_task(task_set, index, num_core, fault=None):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...], task_index, number of core
         Output: boolean (True if task_set[index] is schedulable, False otherwise)
@@ -29,7 +40,11 @@ def rta_task(task_set, index, num_core):
             sum_interfere += min(workload_bound(response_time, _tsk), interference_bound(task, _tsk), response_time-task[1]+1)
         
         all_interfere = math.floor(sum_interfere/ num_core)
-        new_rt = task[1] + math.floor(all_interfere / num_core)
+
+        if fault:
+            new_rt = task[1] + math.floor(all_interfere / num_core) + max([t[1] for t in task_set])
+        else :
+            new_rt = task[1] + math.floor(all_interfere / num_core)
 
         if response_time == new_rt & new_rt < task_set[index][0]:
             return True

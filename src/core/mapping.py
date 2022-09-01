@@ -19,5 +19,4 @@ def critical2core(tasks, num_core):
         mapped_tasks.append((*task, index))
         assigned_cores[index] += task[1] / task[0]
 
-    #TODO: add schedulability check? is it needed?
     return mapped_tasks, assigned_cores

@@ -26,4 +26,4 @@ def cmp_LSs():
 
 
 if __name__ == '__main__':
-    cmp_LSs()
+    main()
