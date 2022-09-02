@@ -1,5 +1,5 @@
 {
-    "num_task_sets": 10,
+    "num_task_sets": 100,
     "num_tasks": 100,
     "critical_prob": 0.1,
     "critical_prob_list": [0.0, 0.1, 0.2, 0.3, 0.4],
