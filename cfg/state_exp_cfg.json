@@ -1,10 +1,12 @@
 {
-    "num_task_sets": 1,
+    "num_task_sets": 10,
     "num_tasks": 100,
     "critical_prob": 0.1,
+    "critical_prob_list": [0.0, 0.1, 0.2, 0.3, 0.4],
     "criticality_per_state": true,
     "task_set_utilization": 30.0,
     "period": [10, 100],
     "num_states": 5,
+    "num_states_list": [1, 5, 10],
     "task_max_utilization": 0.4
 }

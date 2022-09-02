@@ -24,8 +24,8 @@ def get_num_core_ours(tasks):
         if not schedulable:
             core += 2
 
-    print("PRMs: ", prms)
-    print("Mapped all tasks: ", mapped_tasks)
+    # print("PRMs: ", prms)
+    # print("Mapped all tasks: ", mapped_tasks)
 
     return core
 
