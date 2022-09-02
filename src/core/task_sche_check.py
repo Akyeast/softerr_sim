@@ -13,6 +13,7 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
             tasks: [(period, execution, critical, index), (5, 3, 0, 1), ...]
     """
     prms = [[] for _ in range(len(prm_bounds))] # assigned NC
+    prm_params = [(1, 0) for _ in range(len(prm_bounds))] # PRM parameters (pi, theta)
     mapped_tasks = []
 
     for task in tasks:
@@ -26,13 +27,14 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
             # print("optimal parameters: {}, {}, {}\n\n\n".format(pi, theta, prm_bounds[index]))
             if theta / pi <= prm_bounds[index]:
                 prms[index] = groups
+                prm_params[index] = (pi, theta)
                 mapped_tasks.append((*task, index))
                 break;
         else :
             # not schedulable
             mapped_tasks.append((*task, None))
 
-    return prms, mapped_tasks
+    return prm_params, mapped_tasks
 
 def get_minimum_theta(t, pi, dbf):
     return (math.sqrt((t-2*pi)**2 + 4*pi*dbf) - (t - 2*pi)) / 4

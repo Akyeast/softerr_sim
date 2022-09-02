@@ -25,13 +25,29 @@ def rta_all_single(task_set, fault=False):
     else:
         return True
 
-def rta_task_single(task_set, index, fault=False):
-    task = task_set[index]
-    interfere_tasks = task_set[:index] + task_set[index+1:]
+def rta_all_single_wo_drop(task_set, prm, fault=False):
+    """
+        Input: [(period, execution, critical), (5, 3, 1), ...], prm => (period, execution)
+        Output: boolean (True if all tasks are schedulable, False otherwise)
+    """
+    # print("rta_all_wo_drop: {} ///// {}".format(task_set, prm))
+    for i in range(len(task_set)):
+        if not rta_task_single(task_set, i, prm, fault):
+            return False
+    else:
+        return rta_task_single(task_set, len(task_set), prm, fault)
+
+def rta_task_single(task_set, index, prm, fault=False):
+    re_run = max([t[1] for t in task_set]+[0])
+    new_task_set = task_set + [prm]
+    task = new_task_set[index]
+    interfere_tasks = new_task_set[:index] + new_task_set[index+1:]
     max_rt = 0.0
 
     if fault :
-        max_rt += task[1] + max([t[1] for t in task_set])
+        max_rt += task[1] + re_run
+
+    # print("rta_task_wo: {} ///// {} ///// {} ///// {}".format(new_task_set, interfere_tasks, prm, max_rt))
 
     # TODO: fix this range
     for a in range(max([t[0] for t in interfere_tasks]+[0])):
@@ -42,7 +58,7 @@ def rta_task_single(task_set, index, fault=False):
         while response_time <= task[0]:
             new_rt = workload_bound_single(a, response_time, task, interfere_tasks)
             if fault:
-                new_rt += max([t[1] for t in task_set])
+                new_rt += re_run
             if new_rt == response_time:
                 break
             response_time = new_rt
@@ -50,7 +66,7 @@ def rta_task_single(task_set, index, fault=False):
         if response_time-a > max_rt:
             max_rt = response_time-a
 
-    return max(task[1], max_rt) < task[0]
+    return max(task[1], max_rt) <= task[0]
 
 def s_i(a, task) :
     return a - math.floor(a/task[0])*task[0]
