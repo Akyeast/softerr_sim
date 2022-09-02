@@ -5,7 +5,6 @@ from generator.utils import UUniFastDiscard, SimpleRandom
 from generator.task import Task, TaskSet
 
 def generate_tasksets(cfg):
-    
     # tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'])
     tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'])
     period_from, period_to = cfg['period']

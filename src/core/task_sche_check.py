@@ -1,5 +1,5 @@
 import math
-from core.utils import argmin
+from core.utils import argmin, argmax
 from prm.demand import Demand
 from prm.supply import sbf, lsbf
 
@@ -13,11 +13,12 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
             tasks: [(period, execution, critical, index), (5, 3, 0, 1), ...]
     """
     prms = [[] for _ in range(len(prm_bounds))] # assigned NC
-    prm_params = [(1, 0) for _ in range(len(prm_bounds))] # PRM parameters (pi, theta)
+    prm_params = [None for _ in range(len(prm_bounds))] # PRM parameters (pi, theta)
+    remain_utils = prm_bounds.copy()
     mapped_tasks = []
 
     for task in tasks:
-        indexs = argmin(prms, array=True)
+        indexs = argmax(remain_utils, array=True)
         for index in indexs :
             groups = prms[index] + [task]
 
@@ -28,6 +29,7 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
             if theta / pi <= prm_bounds[index]:
                 prms[index] = groups
                 prm_params[index] = (pi, theta)
+                remain_utils[index] -= task[1] / task[0]
                 mapped_tasks.append((*task, index))
                 break;
         else :

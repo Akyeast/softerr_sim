@@ -20,7 +20,7 @@ def rta_all_single(task_set, fault=False):
         Output: boolean (True if all tasks are schedulable, False otherwise)
     """
     for i in range(len(task_set)):
-        if not rta_task_single(task_set, i, fault):
+        if not rta_task_single(task_set, i, fault=fault):
             return False
     else:
         return True
@@ -32,14 +32,19 @@ def rta_all_single_wo_drop(task_set, prm, fault=False):
     """
     # print("rta_all_wo_drop: {} ///// {}".format(task_set, prm))
     for i in range(len(task_set)):
-        if not rta_task_single(task_set, i, prm, fault):
+        if not rta_task_single(task_set, i, prm=prm, fault=fault):
             return False
     else:
-        return rta_task_single(task_set, len(task_set), prm, fault)
+        if prm is None:
+            return True
+        return rta_task_single(task_set, len(task_set), prm=prm, fault=fault)
 
-def rta_task_single(task_set, index, prm, fault=False):
+def rta_task_single(task_set, index, prm=None, fault=False):
     re_run = max([t[1] for t in task_set]+[0])
-    new_task_set = task_set + [prm]
+    new_task_set = task_set
+    if prm is not None:
+        new_task_set = new_task_set + [prm]
+
     task = new_task_set[index]
     interfere_tasks = new_task_set[:index] + new_task_set[index+1:]
     max_rt = 0.0

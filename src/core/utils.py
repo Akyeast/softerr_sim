@@ -29,3 +29,11 @@ def argmin(lst, array=False):
         return srt_lst
     else :
         return srt_lst[0]
+
+def argmax(lst, array=False):
+    srt_lst = sorted(range(len(lst)), key=lambda k: lst[k], reverse=True)
+    
+    if array:
+        return srt_lst
+    else :
+        return srt_lst[0]
