@@ -6,7 +6,7 @@ from logger.logger import Logger
 
 def exp(cfg, logger):
     tasks = generate_tasksets(cfg)
-
+    print(cfg)
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
@@ -15,6 +15,7 @@ def exp(cfg, logger):
 
         logger.write('{},{}'.format(num_core_wo_drop, num_core_ours))
         print(num_core_wo_drop, num_core_ours)
+    print('\n')
 
 def main():
     with open('cfg/rerun_exp_cfg.json', 'r') as f:

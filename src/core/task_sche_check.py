@@ -31,7 +31,7 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
                 prm_params[index] = (pi, theta)
                 remain_utils[index] -= task[1] / task[0]
                 mapped_tasks.append((*task, index))
-                break;
+                break
         else :
             # not schedulable
             mapped_tasks.append((*task, None))

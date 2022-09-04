@@ -32,11 +32,13 @@ def get_num_core_ours_wo_drop(tasks):
 
 def assign_tasks_wo_drop(core, c_tasks, nc_tasks):
     mapped_c_tasks, assigned_cores = critical2core(c_tasks, int(core/2))
+    prms = [ None ] * len(assigned_cores)
+    
+    if len(nc_tasks) > 0:
+        prm_bounds = get_PRM_bound(assigned_cores)
+        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, min([t[0] for t in nc_tasks]))
 
-    prm_bounds = get_PRM_bound(assigned_cores)
-    prms, mapped_nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, cfg['period'])
-
-    mapped_tasks = mapped_c_tasks + mapped_nc_tasks
+    mapped_tasks = mapped_c_tasks + nc_tasks
 
     if not check_fault_case_wo_drop(mapped_c_tasks, assigned_cores, prms):
         return False, prms, mapped_tasks
