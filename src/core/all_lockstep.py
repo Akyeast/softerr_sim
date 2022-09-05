@@ -59,6 +59,7 @@ def check_schedulability_rta_single(task_set, num_core):
         allocated_util[index] += task[1] / task[0]
         allocated_core[index].append(task)
 
+    # return rta_all(task_set, num_core, fault=True)
     for core in allocated_core:
         if not rta_all_single(core, fault=True):
             return False
