@@ -21,6 +21,8 @@ def exp(cfg, logger):
 
         logger.write('{},{}'.format(num_core_stateless, num_core_statewise))
         print(num_core_stateless, num_core_statewise)
+    print("\n\n\n")
+
 
 
 def main():
