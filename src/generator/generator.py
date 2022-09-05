@@ -7,7 +7,7 @@ from generator.task import Task, TaskSet
 def generate_tasksets(cfg):
     # tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'])
     tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'])
-    period_from, period_to = cfg['period']
+    # period_from, period_to = cfg['period']
     critical_prob = cfg['critical_prob']
     criticality_per_state = cfg['criticality_per_state']
 
@@ -16,7 +16,8 @@ def generate_tasksets(cfg):
     for task_set in tasksets_util:
         tasks = []
         for task_util in task_set :
-            period = random.randint(period_from, period_to) # both included
+            period = random.sample(cfg['period'], k=1)[0]
+            # period = random.randint(*cfg['period']) # both included
             execution = max(math.floor(task_util * period), 1)
             if criticality_per_state :
                 criticality = [1 if random.random() < critical_prob else 0 for _ in range(cfg['num_states'])]

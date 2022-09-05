@@ -3,7 +3,7 @@
     "num_tasks": 20,
     "critical_prob_list": [0.0, 0.2, 0.4, 0.6, 0.8, 1.0],
     "criticality_per_state": false,
-    "period": [10, 100],
+    "period": [10, 20, 25, 50, 75, 80, 100],
     "num_states_list": [1],
     "task_max_utilization": 0.2
 }
