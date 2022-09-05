@@ -19,19 +19,18 @@ def UUniFastDiscard(n, u, nsets):
             sets.append(utilizations)
     return sets
 
-def SimpleRandom(n, nsets):
+def SimpleRandom(n, nsets, max_utils):
     """
         Simple Random algorithm
         generates task with utilization [0, task_max_utilization]
     """
-    with open('cfg/task_cfg.json', 'r') as f:
-        cfg = json.load(f)
     sets = []
-
-    while len(sets) < nsets:
+    
+    for _ in range(nsets):
         utilizations = []
-        for i in range(n):
-            utilizations.append(random.random() * cfg['task_max_utilization'])
+        for _ in range(n):
+            utilizations.append(random.random() * max_utils)
         sets.append(utilizations)
+    
 
     return sets

@@ -15,22 +15,23 @@ def get_num_core_LS(task_set, method='deadline'):
     scheduable = False
 
     while not scheduable:
-        scheduable = check_schedulability(task_set, min_core, check_method=method)
-        min_core += 1
+        scheduable = check_schedulability(task_set, min_core, method=method)
+        if not scheduable:
+            min_core += 1
 
     return min_core * 2
 
-def check_schedulability(task_set, num_core, check_method):
+def check_schedulability(task_set, num_core, method):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...]
         Output: True if schedulable, False otherwise
     """
 
-    if check_method == 'deadline':
+    if method == 'deadline':
         return check_schedulability_deadline(task_set, num_core)
-    elif check_method == 'rta':
+    elif method == 'rta':
         return check_schedulability_rta(task_set, num_core)
-    elif check_method == 'rta_single':
+    elif method == 'rta_single':
         return check_schedulability_rta_single(task_set, num_core)
     else:
         raise NotImplementedError
@@ -59,7 +60,6 @@ def check_schedulability_rta_single(task_set, num_core):
         allocated_util[index] += task[1] / task[0]
         allocated_core[index].append(task)
 
-    # return rta_all(task_set, num_core, fault=True)
     for core in allocated_core:
         if not rta_all_single(core, fault=True):
             return False
