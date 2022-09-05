@@ -1,6 +1,7 @@
 import json
 from generator.generator import generate_tasksets
 from core.wo_drop import get_num_core_ours_wo_drop
+from core.all_lockstep import get_num_core_LS
 from core.ours import get_num_core_ours
 from logger.logger import Logger
 
@@ -10,11 +11,12 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
+        num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
         num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts)
         num_core_ours = get_num_core_ours(stateless_ts)
 
-        logger.write('{},{}'.format(num_core_wo_drop, num_core_ours))
-        print(num_core_wo_drop, num_core_ours)
+        logger.write('{},{},{}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
+        print(r'ls: {}, wo_drop: {}, ours: {}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
     print('\n')
 
 def main():

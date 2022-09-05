@@ -30,7 +30,6 @@ def rta_all_single_wo_drop(task_set, prm, fault=False):
         Input: [(period, execution, critical), (5, 3, 1), ...], prm => (period, execution)
         Output: boolean (True if all tasks are schedulable, False otherwise)
     """
-    # print("rta_all_wo_drop: {} ///// {}".format(task_set, prm))
     for i in range(len(task_set)):
         if not rta_task_single(task_set, i, prm=prm, fault=fault):
             return False
@@ -52,8 +51,6 @@ def rta_task_single(task_set, index, prm=None, fault=False):
     if fault :
         max_rt += task[1] + re_run
 
-    # print("rta_task_wo: {} ///// {} ///// {} ///// {}".format(new_task_set, interfere_tasks, prm, max_rt))
-
     # TODO: fix this range
     for a in range(max([t[0] for t in interfere_tasks]+[0])):
     # for a in range(lcm([t[0] for t in interfere_tasks])):
@@ -71,6 +68,7 @@ def rta_task_single(task_set, index, prm=None, fault=False):
         if response_time-a > max_rt:
             max_rt = response_time-a
 
+    # print("response time of task {} is {}".format(task, max(task[1], max_rt)))
     return max(task[1], max_rt) <= task[0]
 
 def s_i(a, task) :

@@ -22,9 +22,9 @@ def get_num_core_ours_wo_drop(tasks):
     while not schedulable:
         schedulable, prms, mapped_tasks = assign_tasks_wo_drop(core, c_tasks, nc_tasks)
 
-        # print("PRMS: ", prms)
-        # print("mapped tasks: ", mapped_tasks)
-    
+        # print("\nPRMS: ", prms)
+        # print("mapped tasks: ", mapped_tasks, '\n')
+        
         if not schedulable:
             core += 2
 
@@ -36,18 +36,22 @@ def assign_tasks_wo_drop(core, c_tasks, nc_tasks):
     
     if len(nc_tasks) > 0:
         prm_bounds = get_PRM_bound(assigned_cores)
-        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, min([t[0] for t in nc_tasks]))
+        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, int(min([t[0] for t in nc_tasks])/2))
 
     mapped_tasks = mapped_c_tasks + nc_tasks
 
-    if not check_fault_case_wo_drop(mapped_c_tasks, assigned_cores, prms):
+    if not check_fault_case_wo_drop(mapped_c_tasks, prms):
         return False, prms, mapped_tasks
 
     return all([t[3] != None for t in mapped_tasks]), prms, mapped_tasks
 
-def check_fault_case_wo_drop(tasks, cores, prms):
-    for i in range(len(cores)):
+def check_fault_case_wo_drop(tasks, prms):
+    # print('check fault case wo drop')
+    # print('tasks: ', tasks)
+    # print('prms: ', prms)
+    for i in range(len(prms)):
         assigned_tasks = [t[:3] for t in filter(lambda x: x[3]==i, tasks)]
+        # print(r"schedulability check on core {} with tasks {} and prm {}".format(i, assigned_tasks, prms[i]))
         schedulability = rta_all_single_wo_drop(assigned_tasks, fault=True, prm=prms[i])
         # schedulability = rta_all(assigned_tasks, num_core=1, fault=True)
         if not schedulability:
