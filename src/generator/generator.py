@@ -16,8 +16,12 @@ def generate_tasksets(cfg):
     for task_set in tasksets_util:
         tasks = []
         for task_util in task_set :
-            period = random.sample(cfg['period'], k=1)[0]
-            # period = random.randint(*cfg['period']) # both included
+            if len(cfg['period']) == 2 :
+                period = random.randint(*cfg['period']) # both included
+            else :
+                period = random.sample(cfg['period'], k=1)[0]
+            
+            
             execution = max(math.floor(task_util * period), 1)
             if criticality_per_state :
                 criticality = [1 if random.random() < critical_prob else 0 for _ in range(cfg['num_states'])]

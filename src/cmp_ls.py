@@ -13,8 +13,9 @@ def exp(cfg, logger):
         num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
         num_core_ours = get_num_core_ours(stateless_ts)
 
-        # logger.write('{},{}'.format(num_core_LS, num_core_ours))
+        logger.write('{},{}'.format(num_core_LS, num_core_ours))
         print(num_core_LS, num_core_ours)
+    print("\n\n\n")
 
 def cmp_LSs():
     tasks = generate_tasksets()
