@@ -3,6 +3,17 @@ from xmlrpc.client import Fault
 
 from core.task_sche_check import lcm
 
+
+def rta_all_wo_drop(tasks, prm_tasks, num_core, fault=False):
+    re_run = max([t[1] for t in tasks]+[0])
+    task_set = [*tasks, *prm_tasks]
+    
+    for i in range(len(task_set)):
+        if not rta_task(task_set, i, num_core, fault, re_run=re_run):
+            return False
+    else:
+        return True
+
 def rta_all(task_set, num_core, fault=False):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...]
@@ -87,13 +98,15 @@ def workload_bound_single(start, interval, task, interfere_tasks):
             bound += min(math.ceil(interval/t[0]), 1+math.floor((start+task[0]-t[0])/t[0]))*t[1] + delta*task[1]
     return bound
 
-def rta_task(task_set, index, num_core, fault=False):
+def rta_task(task_set, index, num_core, fault=False, re_run=None):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...], task_index, number of core
         Output: boolean (True if task_set[index] is schedulable, False otherwise)
     """
     task = task_set[index]
     response_time = task[1]
+    if re_run == None:
+        re_run = max([t[1] for t in task_set])
 
     while response_time < task_set[index][0] :
         sum_interfere = 0.0
@@ -105,11 +118,11 @@ def rta_task(task_set, index, num_core, fault=False):
         all_interfere = math.floor(sum_interfere/ num_core)
 
         if fault:
-            new_rt = task[1] + math.floor((all_interfere + max([t[1] for t in task_set])) / num_core)
+            new_rt = task[1] + math.floor((all_interfere + re_run) / num_core)
         else :
             new_rt = task[1] + math.floor(all_interfere / num_core)
 
-        if response_time == new_rt & new_rt < task_set[index][0]:
+        if (response_time == new_rt) & (new_rt < task_set[index][0]):
             return True
 
         response_time = new_rt
