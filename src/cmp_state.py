@@ -39,7 +39,7 @@ def main():
             new_cfg['critical_prob'] = criticality_prob
             logger = Logger(new_cfg, 
                 level='high',
-                filepath="output/state-bck", 
+                filepath="output/state", 
                 log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
             exp(new_cfg, logger)
     
