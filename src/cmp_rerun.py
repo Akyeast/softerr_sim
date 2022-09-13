@@ -8,6 +8,7 @@ from logger.logger import Logger
 def exp(cfg, logger):
     tasks = generate_tasksets(cfg)
     print(cfg)
+    
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
