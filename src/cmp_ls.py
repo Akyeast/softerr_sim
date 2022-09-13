@@ -6,6 +6,7 @@ from logger.logger import Logger
 
 def exp(cfg, logger):
     tasks = generate_tasksets(cfg)
+    print(cfg)
 
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
@@ -14,8 +15,8 @@ def exp(cfg, logger):
         num_core_ours = get_num_core_ours(stateless_ts)
 
         logger.write('{},{}'.format(num_core_LS, num_core_ours))
-        print(num_core_LS, num_core_ours)
-    print("\n\n\n")
+        print(r'ls: {}, ours: {}'.format(num_core_LS, num_core_ours))
+    print("\n")
 
 def cmp_LSs():
     tasks = generate_tasksets()

@@ -9,7 +9,7 @@ def exp(cfg, logger):
 
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
-        # print("stateless taskset: ", stateless
+        logger.print(f"stateless taskset: {stateless_ts}")
         num_core_stateless = get_num_core_ours(stateless_ts)
         num_core_statewise = 0
 
@@ -18,13 +18,13 @@ def exp(cfg, logger):
             num_core = get_num_core_ours(state_ts)
 
             if num_core_statewise < num_core:
-                # print("statewise taskset:", state_ts)
-                # print("statewise numcore:", num_core)
+                logger.print(f"statewise taskset: {state_ts}")
+                logger.print(f"statewise numcore: {num_core}")
                 num_core_statewise = num_core
 
         logger.write('{},{}'.format(num_core_stateless, num_core_statewise))
         print(r'stateless: {}, statewise:{}'.format(num_core_stateless, num_core_statewise))
-    print("\n\n\n")
+    print("\n")
 
 
 
@@ -37,7 +37,10 @@ def main():
             new_cfg = cfg.copy()
             new_cfg['num_states'] = num_states
             new_cfg['critical_prob'] = criticality_prob
-            logger = Logger(new_cfg, filepath="output/state", log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
+            logger = Logger(new_cfg, 
+                level='high',
+                filepath="output/state-bck", 
+                log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
             exp(new_cfg, logger)
     
 if __name__ == '__main__':
