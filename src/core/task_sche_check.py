@@ -60,3 +60,11 @@ def lcm(lst):
     for i in lst:
         _lcm = _lcm*i // math.gcd(_lcm, i)
     return _lcm
+
+if __name__ == '__main__':
+    tasks = [(10, 2, 0)]
+    prm_bounds = [1.0]
+    pi = 10
+    prm_params, mapped_tasks = assign_nc2PRM(prm_bounds, tasks, pi)
+    print(prm_params)
+    print(mapped_tasks)
