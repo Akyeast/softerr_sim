@@ -25,10 +25,13 @@ def generate_tasksets(cfg):
             execution = max(math.floor(task_util * period), 1)
 
             if criticality_per_state :
-                if random.random() < critical_prob :
-                    criticality = [1 if random.random() < cfg['criticality_threshold'] else 0 for _ in range(cfg['num_states'])]
+                if 'criticality_threshold' in cfg.keys() :
+                    if random.random() < critical_prob :
+                        criticality = [1 if random.random() < cfg['criticality_threshold'] else 0 for _ in range(cfg['num_states'])]
+                    else :
+                        criticality = [0 for _ in range(cfg['num_states'])]
                 else :
-                    criticality = [0 for _ in range(cfg['num_states'])]
+                    criticality = [1 if random.random() < critical_prob else 0 for _ in range(cfg['num_states'])]
             else :
                 criticality = [1 if random.random() < critical_prob else 0] * cfg['num_states']
 
