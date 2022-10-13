@@ -14,10 +14,6 @@ def exp(cfg, logger):
 
         num_core_LS = get_num_core_LS(stateless_ts, method='rta')
         num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts, method='rta')
-
-        # num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
-        # num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts, method='rta_single')
-        
         num_core_ours = get_num_core_ours(stateless_ts)
 
         logger.write('{},{},{}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
@@ -33,7 +29,7 @@ def main():
             new_cfg = cfg.copy()
             new_cfg['num_states'] = num_states
             new_cfg['critical_prob'] = criticality_prob
-            logger = Logger(new_cfg, filepath="output/rerun-bck-lowprob", log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
+            logger = Logger(new_cfg, filepath="output/rerun", log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
             exp(new_cfg, logger)
 
 if __name__ == '__main__':
