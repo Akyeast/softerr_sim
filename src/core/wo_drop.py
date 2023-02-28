@@ -37,7 +37,8 @@ def assign_tasks_wo_drop(core, c_tasks, nc_tasks, method):
     
     if len(nc_tasks) > 0:
         prm_bounds = get_PRM_bound(assigned_cores)
-        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, int(min([t[0] for t in nc_tasks])/2))
+        # 2(pi-theta) < t-e (for all)에 따라 ..
+        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, int(min([(t[0]-t[1]) for t in nc_tasks])/2))
 
     mapped_tasks = mapped_c_tasks + nc_tasks
 
