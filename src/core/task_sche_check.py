@@ -3,7 +3,7 @@ from core.utils import argmin, argmax
 from prm.demand import Demand
 from prm.supply import sbf, lsbf
 
-def assign_nc2PRM(prm_bounds, tasks, pi):
+def assign_nc2PRM(prm_bounds, tasks):
     """
         Input:
             prms: [prm1_max_util, prm2_max_util, ...]
@@ -24,6 +24,7 @@ def assign_nc2PRM(prm_bounds, tasks, pi):
 
             ## schedulability check
             demand = Demand(groups)
+            pi = int(min([(t[0]-t[1]) for t in groups])/2)
             theta = get_optimal_theta(pi, demand)
             # print("optimal parameters: {}, {}, {}\n\n\n".format(pi, theta, prm_bounds[index]))
             if theta / pi <= prm_bounds[index]:

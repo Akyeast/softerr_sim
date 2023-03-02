@@ -32,13 +32,15 @@ def get_num_core_ours_wo_drop(tasks, method='rta_single'):
 
 
 def assign_tasks_wo_drop(core, c_tasks, nc_tasks, method):
-    mapped_c_tasks, assigned_cores = critical2core(c_tasks, int(core/2))
-    prms = [ None ] * len(assigned_cores)
+    mapped_c_tasks, assigned_cores, max_utils = critical2core(c_tasks, int(core/2))
     
     if len(nc_tasks) > 0:
-        prm_bounds = get_PRM_bound(assigned_cores)
+        # prm_bounds = get_PRM_bound(assigned_cores)
+        prm_bounds = get_PRM_bound([sum(value) for value in zip(assigned_cores, max_utils)])
         # 2(pi-theta) < t-e (for all)에 따라 ..
-        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, int(min([(t[0]-t[1]) for t in nc_tasks])/2))
+        prms, nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks)
+    else: 
+        prms = [None] * len(assigned_cores)
 
     mapped_tasks = mapped_c_tasks + nc_tasks
 

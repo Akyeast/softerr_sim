@@ -30,13 +30,13 @@ def get_num_core_ours(tasks):
     return core
 
 def assign_tasks(core, c_tasks, nc_tasks):
-    mapped_c_tasks, assigned_cores = critical2core(c_tasks, int(core/2))
+    mapped_c_tasks, assigned_cores, _ = critical2core(c_tasks, int(core/2))
 
     if not check_fault_case(mapped_c_tasks, assigned_cores):
         return False, None, None
 
     prm_bounds = get_PRM_bound(assigned_cores)
-    prms, mapped_nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks, cfg['period'])
+    prms, mapped_nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks)
     
     mapped_tasks = mapped_c_tasks + mapped_nc_tasks
 

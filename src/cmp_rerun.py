@@ -12,12 +12,12 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
-        num_core_LS = get_num_core_LS(stateless_ts, method='rta')
-        num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts, method='rta')
+        num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
+        num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts, method='rta_single')
         num_core_ours = get_num_core_ours(stateless_ts)
 
         logger.write('{},{},{}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
-        print(r'ls: {}, wo_drop: {}, ours: {}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
+        print(f'ls: {num_core_LS:3}, wo_drop: {num_core_wo_drop:3}, ours: {num_core_ours:3}')
     print('\n')
 
 def main():
