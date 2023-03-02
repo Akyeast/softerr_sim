@@ -23,7 +23,7 @@ def exp(cfg, logger):
                 num_core_statewise = num_core
 
         logger.write('{},{}'.format(num_core_stateless, num_core_statewise))
-        print(r'stateless: {}, statewise:{}'.format(num_core_stateless, num_core_statewise))
+        print(f'stateless: {num_core_stateless:2}, statewise:{num_core_statewise:2}')
     print("\n")
 
 
