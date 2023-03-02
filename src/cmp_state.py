@@ -10,12 +10,12 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
         logger.print(f"stateless taskset: {stateless_ts}")
-        num_core_stateless = get_num_core_ours(stateless_ts)
+        num_core_stateless, _, _ = get_num_core_ours(stateless_ts)
         num_core_statewise = 0
 
         for state in range(cfg['num_states']):
             state_ts = task_set.get_tasks(sort=True, desc=True, state_num=state)
-            num_core = get_num_core_ours(state_ts)
+            num_core, _, _ = get_num_core_ours(state_ts)
 
             if num_core_statewise < num_core:
                 logger.print(f"statewise taskset: {state_ts}")

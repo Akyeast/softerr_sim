@@ -27,7 +27,7 @@ def get_num_core_ours(tasks):
     # print("PRMs: ", prms)
     # print("Mapped all tasks: ", mapped_tasks)
 
-    return core
+    return core, prms, mapped_tasks
 
 def assign_tasks(core, c_tasks, nc_tasks):
     mapped_c_tasks, assigned_cores, _ = critical2core(c_tasks, int(core/2))

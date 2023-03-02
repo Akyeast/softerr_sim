@@ -14,7 +14,7 @@ def exp(cfg, logger):
 
         num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
         num_core_wo_drop = get_num_core_ours_wo_drop(stateless_ts, method='rta_single')
-        num_core_ours = get_num_core_ours(stateless_ts)
+        num_core_ours, _, _ = get_num_core_ours(stateless_ts)
 
         logger.write('{},{},{}'.format(num_core_LS, num_core_wo_drop, num_core_ours))
         print(f'ls: {num_core_LS:2}, wo_drop: {num_core_wo_drop:2}, ours: {num_core_ours:2}')
