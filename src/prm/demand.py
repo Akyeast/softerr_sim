@@ -38,7 +38,23 @@ class Demand() :
             return min(self.workload(t, k) - exct - self.carry_in(t, k), A_k)
 
     def demand(self, A_k, k) : # demand(A_k+D_k, k)
+        m = 2
         task_len = len(self.tasks)
         body_job_sum = sum([self.interference_hat(i, k, A_k) for i in range(task_len)])
         carry_in_job_sum = max([self.interference_bar(i, k, A_k) - self.interference_hat(i, k, A_k) for i in range(task_len)])
-        return body_job_sum + carry_in_job_sum + 2 * self.tasks[k][1]
+        return body_job_sum + carry_in_job_sum + m * self.tasks[k][1]
+
+
+if __name__ == '__main__':
+    demand = Demand([(10, 3, 0), (10, 3, 0)])
+    print("0: ", demand.demand(0, 0), demand.demand(0, 1))
+    print("1: ", demand.demand(1, 0), demand.demand(1, 1))
+    print("2: ", demand.demand(2, 0), demand.demand(2, 1))
+    print("3: ", demand.demand(3, 0), demand.demand(3, 1))
+    print("4: ", demand.demand(4, 0), demand.demand(4, 1))
+    print("5: ", demand.demand(5, 0), demand.demand(5, 1))
+    print("6: ", demand.demand(6, 0), demand.demand(6, 1))
+    print("7: ", demand.demand(7, 0), demand.demand(7, 1))
+    print("8: ", demand.demand(8, 0), demand.demand(8, 1))
+    print("9: ", demand.demand(9, 0), demand.demand(9, 1))
+    print("10: ", demand.demand(10, 0), demand.demand(10, 1))
