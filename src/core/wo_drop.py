@@ -28,7 +28,7 @@ def get_num_core_ours_wo_drop(tasks, method='rta_single'):
         if not schedulable:
             core += 2
 
-    return core
+    return core, prms, mapped_tasks
 
 
 def assign_tasks_wo_drop(core, c_tasks, nc_tasks, method):

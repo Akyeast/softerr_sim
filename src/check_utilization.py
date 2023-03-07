@@ -12,13 +12,23 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
-        core, prms, mapped_tasks = get_num_core_ours(stateless_ts)
-        utilization_sum = [t[1]/t[0] if t is not None else 0.0  for t in prms]
-        for task in mapped_tasks:
+        # ours
+        _, ours_prms, ours_mapped_tasks = get_num_core_ours(stateless_ts)
+        ours_utilization_sum = [t[1]/t[0] if t is not None else 0.0  for t in ours_prms]
+        for task in ours_mapped_tasks:
             if task[2] == 1:
-                utilization_sum[task[3]] += task[1]/task[0]
-        utilization_avg = sum(utilization_sum)/len(utilization_sum)
-        logger.write('{}'.format(utilization_avg))
+                ours_utilization_sum[task[3]] += task[1]/task[0]
+        ours_utilization_avg = sum(ours_utilization_sum)/len(ours_utilization_sum)
+
+        # without rerun
+        _, wo_prms, wo_mapped_tasks = get_num_core_ours_wo_drop(stateless_ts)
+        wo_utilization_sum = [t[1]/t[0] if t is not None else 0.0  for t in wo_prms]
+        for task in wo_mapped_tasks:
+            if task[2] == 1:
+                wo_utilization_sum[task[3]] += task[1]/task[0]
+        wo_utilization_avg = sum(wo_utilization_sum)/len(wo_utilization_sum)
+
+        logger.write('{},{}'.format(ours_utilization_avg, wo_utilization_avg))
     print('\n')
 
 def main():
