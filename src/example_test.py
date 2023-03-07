@@ -1,9 +1,17 @@
 from generator.generator import generate_example_taskset
 from core.ours import get_num_core_ours
+from core.all_lockstep import get_num_core_LS
 
 def main():   
     tasks = generate_example_taskset().get_tasks(sort=True, desc=True)
-    print(tasks)
+    print('tasks: ', tasks)
+
+    # # LS
+    # ls_core, ls_mapped_tasks = get_num_core_LS(tasks, method='rta_single')
+    # print('ls_core: ', ls_core)
+    # print('ls_mapped_tasks: ', ls_mapped_tasks)
+
+    # ours
     core, prms, mapped_tasks = get_num_core_ours(tasks)
     print('core: ', core)
     print('prms: ', prms)

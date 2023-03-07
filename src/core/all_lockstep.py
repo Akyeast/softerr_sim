@@ -15,11 +15,11 @@ def get_num_core_LS(task_set, method='deadline'):
     scheduable = False
 
     while not scheduable:
-        scheduable = check_schedulability(task_set, min_core, method=method)
+        scheduable, allocated_tasks = check_schedulability(task_set, min_core, method=method)
         if not scheduable:
             min_core += 1
 
-    return min_core * 2
+    return min_core * 2, allocated_tasks
 
 def check_schedulability(task_set, num_core, method):
     """
@@ -38,18 +38,21 @@ def check_schedulability(task_set, num_core, method):
 
 
 def check_schedulability_deadline(task_set, num_core):
-    allocated = [0.0 for _ in range(num_core)]
+    allocated_core = [0.0 for _ in range(num_core)]
+    allocated_task = [[] for _ in range(num_core)]
 
     for task in task_set:
-        index = argmin(allocated)
-        allocated[index] += task[1] / (task[0] - task[1])
-        if (allocated[index] > 1.0):
-            return False
+        index = argmin(allocated_core)
+        allocated_core[index] += task[1] / (task[0] - task[1])
+        allocated_task[index].append(task)
+        if (allocated_core[index] > 1.0):
+            return False, None
     else :
-        return True
+        return True, allocated_task
 
 def check_schedulability_rta(task_set, num_core):
-    return rta_all(task_set, num_core, fault=True)
+    # no exact allocated task in this method
+    return rta_all(task_set, num_core, fault=True), None
 
 def check_schedulability_rta_single(task_set, num_core):
     allocated_core = [[] for _ in range(num_core)]
@@ -62,6 +65,6 @@ def check_schedulability_rta_single(task_set, num_core):
 
     for core in allocated_core:
         if not rta_all_single(core, fault=True):
-            return False
+            return False, None
     else :
-        return True
+        return True, allocated_core

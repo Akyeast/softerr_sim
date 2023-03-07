@@ -12,7 +12,7 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
-        num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
+        num_core_LS, _ = get_num_core_LS(stateless_ts, method='rta_single')
         num_core_wo_drop, _, _ = get_num_core_ours_wo_drop(stateless_ts, method='rta_single')
         num_core_ours, _, _ = get_num_core_ours(stateless_ts)
 

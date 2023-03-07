@@ -11,7 +11,7 @@ def exp(cfg, logger):
     for task_set in tasks:
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
 
-        num_core_LS = get_num_core_LS(stateless_ts, method='rta_single')
+        num_core_LS, _ = get_num_core_LS(stateless_ts, method='rta_single')
         num_core_ours, _, _ = get_num_core_ours(stateless_ts)
 
         logger.write('{},{}'.format(num_core_LS, num_core_ours))
@@ -25,8 +25,8 @@ def cmp_LSs():
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
         print(stateless_ts)
 
-        deadline = get_num_core_LS(stateless_ts, method='deadline')
-        rta = get_num_core_LS(stateless_ts, method='rta')
+        deadline, _ = get_num_core_LS(stateless_ts, method='deadline')
+        rta, _ = get_num_core_LS(stateless_ts, method='rta')
         print(deadline, rta)
 
 def main():

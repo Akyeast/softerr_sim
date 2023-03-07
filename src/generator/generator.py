@@ -46,11 +46,11 @@ def generate_tasksets(cfg):
 def generate_example_taskset() :
     # (period, execution, criticality per state)
     tasks = [
-        # Task(10, 3, [1]),
-        # Task(20, 7, [1]),
-        # Task(30, 10, [0]),
-        # Task(25, 3, [0]),
-        # Task(20, 4, [0]),
+        Task(10, 3, [1]),
+        Task(20, 7, [1]),
+        Task(30, 10, [0]),
+        Task(25, 3, [0]),
+        Task(20, 4, [0]),
         Task(10, 3, [0]),
         Task(10, 3, [0]),
     ]
