@@ -11,5 +11,12 @@ def main():
     for i in range(max([t[3] for t in mapped_tasks])+1):
         print(f"core {2*i},{2*i+1}: ", [t[:3] for t in filter(lambda x: x[3]==i, mapped_tasks)])
 
+    utilization_sum = [e/p for (p, e) in prms]
+    for task in mapped_tasks:
+        if task[2] == 1:
+            utilization_sum[task[3]] += task[1]/task[0]
+    utilization_avg = sum(utilization_sum)/len(utilization_sum)
+    print('utilization_avg: ', utilization_avg)
+
 if __name__ == '__main__':
     main()
