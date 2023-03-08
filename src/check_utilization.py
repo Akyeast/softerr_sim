@@ -36,7 +36,6 @@ def exp(cfg, logger):
         ours_utilization_avg = sum(ours_utilization_sum)/len(ours_utilization_sum)
 
         logger.write('{},{},{}'.format(ls_utilization_avg, wo_utilization_avg, ours_utilization_avg))
-    print('\n')
 
 def main():
     with open('cfg/utilization_cfg.json', 'r') as f:
