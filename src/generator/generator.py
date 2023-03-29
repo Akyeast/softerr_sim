@@ -24,17 +24,15 @@ def generate_tasksets(cfg):
             
             execution = max(math.floor(task_util * period), 1)
 
+            # TODO: Remove * cfg['num_states']
+            critical_factor = 1 if random.random() < critical_prob else 0
             if criticality_per_state :
-                if 'criticality_threshold' in cfg.keys() :
-                    if random.random() < critical_prob :
-                        criticality = [1 if random.random() < cfg['criticality_threshold'] else 0 for _ in range(cfg['num_states'])]
-                    else :
-                        criticality = [0 for _ in range(cfg['num_states'])]
+                if critical_factor == 1 : # if task is critical
+                    criticality = [1 if random.random() < 0.5 else 0 for _ in range(cfg['num_states'])] 
                 else :
-                    criticality = [1 if random.random() < critical_prob else 0 for _ in range(cfg['num_states'])]
+                    criticality = [0] * cfg['num_states']
             else :
-                criticality = [1 if random.random() < critical_prob else 0] * cfg['num_states']
-
+                criticality = critical_factor  * cfg['num_states']
 
             tasks.append(Task(period, execution, criticality))
 
@@ -58,5 +56,14 @@ def generate_example_taskset() :
     return TaskSet(tasks)
 
 if __name__ == '__main__':
-    tasks = generate_tasksets()
-    # print(tasks[0].get_tasks(sort=True, desc=True))
+    cfg = {
+        'num_tasks' : 5,
+        'num_task_sets' : 1,
+        'task_max_utilization' : 0.7,
+        'period' : [10, 30],
+        'critical_prob' : 0.5,
+        'criticality_per_state' : True,
+        'num_states' : 5,
+    }
+    tasks = generate_tasksets(cfg)
+    print(tasks[0])
