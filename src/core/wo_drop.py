@@ -12,7 +12,7 @@ def get_num_core_ours_wo_drop(tasks, method='rta_single'):
         Input: 
             [(period, execution, critical), (5, 3, 1), ...]
         Output:
-            minimum required core number
+            minimum required core number, prm, mapped task
     """
     core = get_minimum_core(tasks)
     c_tasks = [task for task in tasks if task[2] == 1]

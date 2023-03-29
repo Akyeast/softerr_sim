@@ -32,7 +32,7 @@ def generate_tasksets(cfg):
                 else :
                     criticality = [0] * cfg['num_states']
             else :
-                criticality = critical_factor  * cfg['num_states']
+                criticality = [critical_factor]  * cfg['num_states']
 
             tasks.append(Task(period, execution, criticality))
 
