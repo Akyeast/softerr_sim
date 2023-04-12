@@ -21,9 +21,11 @@ def exp(cfg, logger):
                 logger.print(f"statewise taskset: {state_ts}")
                 logger.print(f"statewise numcore: {num_core}")
                 num_core_statewise = num_core
-
+        # if num_core_stateless < num_core_statewise:
+        #     print(f"taskset: {task_set}")
+        #     print(f"stateless taskset: {stateless_ts}")
         logger.write('{},{}'.format(num_core_stateless, num_core_statewise))
-        print(f'stateless: {num_core_stateless:2}, statewise:{num_core_statewise:2}')
+        print(f'stateless: {num_core_stateless:2}, statewise: {num_core_statewise:2}')
     print("\n")
 
 

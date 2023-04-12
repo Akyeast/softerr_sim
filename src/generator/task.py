@@ -1,9 +1,12 @@
+import random
+
 class Task():
     def __init__(self, period, execution, criticality):
         self.period = period
         self.execution = execution
         self.utilization = execution / period
         self.criticality = criticality
+        self.critical_factor = max(criticality)
 
     def __str__(self):
         return "Task(period={}, execution={}, criticality={})\n".format(self.period, self.execution, self.criticality)
@@ -32,6 +35,16 @@ class TaskSet():
         if sort:
             tasks.sort(key=lambda x: x[1]/x[0], reverse=desc)
         return tasks
+    
+    def assign_new_criticality(self, num_states):
+        for i in range(len(self.tasks)):
+            if self.tasks[i].critical_factor == 1:
+                self.tasks[i].criticality = [1 if random.random() < 0.3 else 0 for _ in range(num_states)]
+                if max(self.tasks[i].criticality) == 0:
+                    self.tasks[i].criticality[random.randint(0, num_states-1)] = 1
+            else:
+                self.tasks[i].criticality = [0 for _ in range(num_states)]
+        
 
     def __str__(self):
         return "TaskSet:\n{}".format(self.tasks)

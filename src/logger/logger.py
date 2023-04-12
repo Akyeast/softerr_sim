@@ -4,7 +4,7 @@ def build_string(params):
     return '&'.join(['{}={}'.format(k, v) for k, v in sorted(params.items())])
 
 class Logger():
-    def __init__(self, params, level='low', filepath='', log_params=[]):
+    def __init__(self, params, level='high', filepath='', log_params=[]):
         assert level in ['low', 'high']
         self.level = level
 

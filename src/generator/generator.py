@@ -19,8 +19,7 @@ def generate_tasksets(cfg):
             if len(cfg['period']) == 2 :
                 period = random.randint(*cfg['period']) # both included
             else :
-                period = random.sample(cfg['period'], k=1)[0]
-            
+                period = random.sample(cfg['period'], k=1)[0]         
             
             execution = max(math.floor(task_util * period), 1)
 
@@ -28,7 +27,7 @@ def generate_tasksets(cfg):
             critical_factor = 1 if random.random() < critical_prob else 0
             if criticality_per_state :
                 if critical_factor == 1 : # if task is critical
-                    criticality = [1 if random.random() < 0.5 else 0 for _ in range(cfg['num_states'])] 
+                    criticality = [1 if random.random() < 0.3 else 0 for _ in range(cfg['num_states'])] 
                 else :
                     criticality = [0] * cfg['num_states']
             else :
