@@ -130,4 +130,4 @@ dmypy.json
 
 
 # synthetic experiments
-# output/*
+output/*
