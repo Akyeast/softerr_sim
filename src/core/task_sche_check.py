@@ -18,6 +18,8 @@ def assign_nc2PRM(prm_bounds, tasks):
 
     for task in tasks:
         indexs = argmax(remain_utils, array=True)
+        # indexs = argmin(remain_utils, array=True)
+       
         for index in indexs :
             groups = prms[index] + [task]
 
@@ -35,6 +37,9 @@ def assign_nc2PRM(prm_bounds, tasks):
         else :
             # not schedulable
             mapped_tasks.append((*task, None))
+            # print('remain util: ', remain_utils)
+            # print('prm bounds: ', prm_bounds)
+            # print('indexs: ', indexs, '\n')
 
     return prm_params, mapped_tasks
 

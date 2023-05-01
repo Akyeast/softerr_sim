@@ -45,6 +45,7 @@ def assign_tasks_wo_drop(core, c_tasks, nc_tasks, method):
     mapped_tasks = mapped_c_tasks + nc_tasks
 
     if not check_fault_case_wo_drop(mapped_c_tasks, prms, method):
+        # print("not schedulable with core {} and prms {}".format(core, prms))
         return False, prms, mapped_tasks
 
     return all([t[3] != None for t in mapped_tasks]), prms, mapped_tasks

@@ -46,7 +46,7 @@ class Demand() :
 
 
 if __name__ == '__main__':
-    demand = Demand([(10, 3, 0), (10, 3, 0)])
+    demand = Demand([(70, 5, 0), (70, 5, 0)])
     print("0: ", demand.demand(0, 0), demand.demand(0, 1))
     print("1: ", demand.demand(1, 0), demand.demand(1, 1))
     print("2: ", demand.demand(2, 0), demand.demand(2, 1))

@@ -2,7 +2,7 @@ import math
 from core.utils import argmin
 from core.rta import rta_all, rta_all_single
 
-def get_num_core_LS(task_set, method='deadline'):
+def get_num_core_LS(task_set, method='rta_single'):
     """
         Input: [(period, execution, critical), (5, 3, 1), ...], method = 'deadline' or 'rta'
         Output: minimum number of core under lockstep

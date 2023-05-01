@@ -1,4 +1,5 @@
 import json
+import os
 
 def build_string(params):
     return '&'.join(['{}={}'.format(k, v) for k, v in sorted(params.items())])
@@ -19,6 +20,9 @@ class Logger():
         else :
             new_params = {k: v for k, v in params.items() if k in log_params}
             self.filepath = '{}/{}.txt'.format(filepath, build_string(new_params))
+        
+        if not os.path.exists(filepath):
+            os.makedirs(filepath)
     
     def write(self, content):
         with open(self.filepath, 'a') as f:
