@@ -6,5 +6,7 @@
     "period": [10, 100],
     "num_states_list": [1, 2, 3, 4 ,5, 6],
     "num_states": 1,
-    "task_max_utilization": 0.1
+    "task_max_utilization": 0.1,
+    "task_set_utilization": 1.5,
+    "period_gen": "random_sample"
 }

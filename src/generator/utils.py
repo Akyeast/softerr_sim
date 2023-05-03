@@ -1,7 +1,7 @@
 import random
 import json
 
-def UUniFastDiscard(n, u, nsets):
+def UUniFastDiscard(n, u, nsets, max_utils):
     sets = []
     while len(sets) < nsets:
         # Classic UUniFast algorithm:
@@ -15,7 +15,7 @@ def UUniFastDiscard(n, u, nsets):
 
         # If no task utilization exceeds 0.5:
         # HAEJOO: change this because heavy task(util>0.5) cannot be re-runed.
-        if all(ut <= 0.5 for ut in utilizations):
+        if all(ut <= max_utils for ut in utilizations):
             sets.append(utilizations)
     return sets
 
