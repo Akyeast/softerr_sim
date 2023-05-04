@@ -6,8 +6,15 @@ from scipy.stats import loguniform
 from generator.task import Task, TaskSet
 
 def generate_tasksets(cfg):
-    tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'], cfg['task_max_utilization'])
-    # tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
+    if "util_gen" not in cfg :
+        tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
+    elif cfg["util_gen"] == 'random' : 
+        tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
+    elif cfg["util_gen"] == 'uunifast':
+        tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'], cfg['task_max_utilization'])
+    else :
+        raise NotImplementedError
+
     # period_from, period_to = cfg['period']
     critical_prob = cfg['critical_prob']
     criticality_per_state = cfg['criticality_per_state']
@@ -22,7 +29,7 @@ def generate_tasksets(cfg):
             elif cfg['period_gen'] == "uniform" :
                 period = random.randint(*cfg['period']) # both included
             elif cfg['period_gen'] == "log":
-                period = int(loguniform.rvs(*cfg['period']))
+                period = round(loguniform.rvs(*cfg['period']))
             else :
                 raise NotImplementedError
             
