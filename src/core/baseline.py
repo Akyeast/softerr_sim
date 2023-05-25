@@ -4,9 +4,6 @@ from core.utils import get_minimum_core, get_PRM_bound
 from core.task_sche_check import assign_nc2PRM
 from core.rta import rta_all_baseline
 
-with open('cfg/prm_cfg.json', 'r') as f:
-    cfg = json.load(f)
-
 def get_num_core_baseline(tasks):
     """
         Input: 
@@ -20,7 +17,7 @@ def get_num_core_baseline(tasks):
     schedulable = False
 
     while not schedulable:
-        schedulable, prms, mapped_tasks = assign_tasks(core, c_tasks, nc_tasks)
+        schedulable, prms, mapped_tasks = assign_tasks(core, tasks, [])
         if not schedulable:
             core += 2
 
@@ -42,8 +39,10 @@ def assign_tasks(core, c_tasks, nc_tasks):
 def check_fault_case(tasks, cores):
     for i in range(len(cores)):
         assigned_tasks = [t[:3] for t in filter(lambda x: x[3]==i, tasks)]
+
         critical = [t for t in filter(lambda x: x[2]==1, assigned_tasks)]
         non_critical = [t for t in filter(lambda x: x[2]==0, assigned_tasks)]
+
         schedulability = rta_all_baseline(critical, non_critical, fault=True)
         if not schedulability:
             return False
