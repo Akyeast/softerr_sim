@@ -27,6 +27,7 @@ def rta_all(task_set, num_core, fault=False):
 
 def rta_all_single(task_set, fault=False):
     """
+        Do schedulability check per core (iterate all critical task)
         Input: [(period, execution, critical), (5, 3, 1), ...]
         Output: boolean (True if all tasks are schedulable, False otherwise)
     """
@@ -49,11 +50,27 @@ def rta_all_single_wo_drop(task_set, prm, fault=False):
             return True
         return rta_task_single(task_set, len(task_set), prm=prm, fault=fault)
 
+def rta_all_baseline(task_set, nc, fault=False):
+    """
+        Do schedulability check per core (iterate all critical task)
+        Input: [(period, execution, critical), (5, 3, 1), ...]
+        Output: boolean (True if all tasks are schedulable, False otherwise)
+    """
+    for i in range(len(task_set)):
+        if not rta_task_single(task_set, i, prm=nc, fault=fault):
+            return False
+    else:
+        return True
+
 def rta_task_single(task_set, index, prm=None, fault=False):
     re_run = max([t[1] for t in task_set]+[0])
     new_task_set = task_set
     if prm is not None:
-        new_task_set = new_task_set + [prm]
+        if type(prm) == list:
+            new_task_set = new_task_set + prm
+        else:
+            new_task_set = new_task_set + [prm]
+        
 
     task = new_task_set[index]
     interfere_tasks = new_task_set[:index] + new_task_set[index+1:]

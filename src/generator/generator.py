@@ -24,7 +24,7 @@ def generate_tasksets(cfg):
     for task_set in tasksets_util:
         tasks = []
         for task_util in task_set :
-            if cfg['period_gen'] == "random_sample":
+            if cfg['period_gen'] == "sampling":
                 period = random.sample(cfg['period'], k=1)[0]
             elif cfg['period_gen'] == "uniform" :
                 period = random.randint(*cfg['period']) # both included

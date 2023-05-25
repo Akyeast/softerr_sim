@@ -39,7 +39,7 @@ class TaskSet():
     def assign_new_criticality(self, num_states):
         for i in range(len(self.tasks)):
             if self.tasks[i].critical_factor == 1:
-                self.tasks[i].criticality = [1 if random.random() < 0.3 else 0 for _ in range(num_states)]
+                self.tasks[i].criticality = [1 if random.random() < 0.5 else 0 for _ in range(num_states)]
                 if max(self.tasks[i].criticality) == 0:
                     self.tasks[i].criticality[random.randint(0, num_states-1)] = 1
             else:

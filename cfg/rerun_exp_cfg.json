@@ -1,12 +1,12 @@
 {
-    "num_task_sets": 1000,
+    "num_task_sets": 800,
     "num_tasks": 10,
     "critical_prob_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     "criticality_per_state": false,
-    "period": [10, 5000],
+    "period": [10,500],
     "num_states_list": [1],
     "task_max_utilization": 0.3,
-    "task_set_utilization": 1.0,
+    "max_util_list": [1.0],
     "period_gen": "log",
-    "util_gen": "uunifast"
+    "util_gen": "random"
 }
