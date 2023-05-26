@@ -24,7 +24,7 @@ def exp(tasks, state, logger):
         for s in range(state):
             state_ts = task_set.get_tasks(sort=True, desc=True, state_num=s)
 
-            new_num_core_LS, _, _ = get_num_core_baseline(state_ts)
+            new_num_core_LS, _, _ = get_num_core_baseline(state_ts, method='rta_single')
             new_num_core_wo_drop, _, _ = get_num_core_ours_wo_drop(state_ts, method='rta_single')
             new_num_core_ours, _, _ = get_num_core_ours(state_ts)
 

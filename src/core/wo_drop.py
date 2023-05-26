@@ -65,7 +65,19 @@ def check_fault_case_wo_drop(tasks, prms, method):
                 return False
         else:
             return True
+        
     elif method == 'rta':
         tasks = [t[:3] for t in tasks]
         prm_tasks = [(task[0], task[1], 0) for task in prms if task!=None]
         return rta_all_wo_drop(tasks, prm_tasks, len(prms), fault=True)
+    
+    elif method == 'duplicate':
+        for i in range(len(prms)):
+            assigned_tasks = [t[:3] for t in filter(lambda x: x[3]==i, tasks)]
+            core_util = 2*sum([t[1]/t[0] for t in filter(lambda x: x[2]==1, assigned_tasks)])
+            if prms[i] != None:
+                core_util += prms[i][1] / prms[i][0]
+            if core_util >= 1.0 :
+                return False
+        else: 
+            return True
