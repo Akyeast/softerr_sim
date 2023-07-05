@@ -1,8 +1,4 @@
 import math
-from xmlrpc.client import Fault
-
-from core.task_sche_check import lcm
-
 
 def rta_all_wo_drop(tasks, prm_tasks, num_core, fault=False):
     re_run = max([t[1] for t in tasks]+[0])

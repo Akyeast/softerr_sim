@@ -11,7 +11,7 @@ def run_exp(cfg):
 
     for state in cfg['num_states_list']:
         print({**cfg, 'num_states': state})
-        logger = Logger({**cfg, 'num_states': state}, filepath="output/idea23", log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization', 'period'])
+        logger = Logger({**cfg, 'num_states': state}, filepath="output/idea23_util", log_params=['num_states', 'critical_prob', 'num_tasks', 'task_max_utilization'])
         exp(tasks, state, logger)
 
 
@@ -44,15 +44,17 @@ def exp(tasks, state, logger):
 
 
 def main():
-    with open('cfg/idea23_exp_cfg.json', 'r') as f:
+    with open('cfg/idea23_util_exp_cfg.json', 'r') as f:
         cfg = json.load(f)
 
     for criticality_prob in cfg['critical_prob_list'] :
-        new_cfg = cfg.copy()
-        new_cfg['num_states_list'] = cfg['num_states_list']
-        new_cfg['critical_prob'] = criticality_prob
+        for task_set_util in cfg['task_set_util_list']:
+            new_cfg = cfg.copy()
+            new_cfg['num_states_list'] = cfg['num_states_list']
+            new_cfg['critical_prob'] = criticality_prob
+            new_cfg['task_set_utilization'] = task_set_util
         
-        run_exp(new_cfg)
+            run_exp(new_cfg)
     
 if __name__ == '__main__':
     main()

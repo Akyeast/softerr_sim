@@ -2,6 +2,7 @@ import json
 from generator.generator import generate_tasksets
 from core.baseline import get_num_core_baseline
 from logger.logger import Logger
+from core.ours import get_num_core_ours
 
 def run_exp(cfg):
     tasks = generate_tasksets(cfg)
@@ -17,13 +18,15 @@ def exp(tasks, state, logger):
         task_set.assign_new_criticality(state)
 
         stateless_ts = task_set.get_tasks(sort=True, desc=True)
-        num_core_stateless, _, _ = get_num_core_baseline(stateless_ts, method='duplicate')
+        num_core_stateless, _, _ = get_num_core_ours(stateless_ts)
+        # num_core_stateless, _, _ = get_num_core_baseline(stateless_ts, method='duplicate')
         
         num_core_statewise = 0
         for s in range(state):
             state_ts = task_set.get_tasks(sort=True, desc=True, state_num=s)
 
-            num_core, _, _ = get_num_core_baseline(state_ts, method='duplicate')
+            num_core, _, _ = get_num_core_ours(state_ts)
+            # num_core, _, _ = get_num_core_baseline(state_ts, method='duplicate')
 
             if num_core_statewise < num_core:
                 logger.print(f"statewise taskset: {state_ts}")
