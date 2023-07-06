@@ -3,7 +3,7 @@ from generator.generator import generate_tasksets
 from core.baseline import get_num_core_baseline
 from core.wo_drop import get_num_core_ours_wo_drop
 from core.all_lockstep import get_num_core_LS
-from core.ours import get_num_core_ours
+from core.ours import get_num_core_ours_delta
 from logger.logger import Logger
 
 def run_exp(cfg):
@@ -24,11 +24,15 @@ def exp(tasks, cfg, logger):
         for s in range(cfg['num_states']):
             state_ts = task_set.get_tasks(sort=True, desc=True, state_num=s)
 
-            new_num_core_ours, _, _ = get_num_core_ours(state_ts, cfg['delta'])
+            new_num_core_ours, _, _ = get_num_core_ours_delta(state_ts, cfg['delta'])
+            # new_num_core_ours, prms, mapped_task = get_num_core_ours_delta(state_ts, cfg['delta'])
             num_core_ours = max(num_core_ours, new_num_core_ours)
 
         logger.write('{}'.format(num_core_ours))
         print(f'ours: {num_core_ours:2}')
+        # print(prms)
+        # print(mapped_task)
+
 
 
 def main():
