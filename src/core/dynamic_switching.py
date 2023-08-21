@@ -8,8 +8,8 @@ from core.tda import tda_analysis
 with open('cfg/prm_cfg.json', 'r') as f:
     cfg = json.load(f)
 
-### Solution
-def check_schedulable_ours(tasks, delta=1.0, num_core=8):
+
+def check_schedulable_dynamic_switching(tasks, delta=1.0, num_core=8):
     """
         Input: 
             [(period, execution, critical), (5, 3, 1), ...]
@@ -24,14 +24,12 @@ def check_schedulable_ours(tasks, delta=1.0, num_core=8):
     is_schedulable = False
     prms, mapped_tasks = [], []
 
-    is_schedulable_c, mapped_c_tasks, assigned_utils = assign_critical_tda(int(num_core/2), c_tasks, delta)
-    # print(f'DEBUG_ours___1: {mapped_c_tasks}')
+    is_schedulable_c, mapped_c_tasks, assigned_utils = assign_critical_tda_reserve_rerun(int(num_core/2), c_tasks, delta)
 
     prm_bounds = get_PRM_bound(assigned_utils)
     prms, mapped_nc_tasks = assign_nc2PRM(prm_bounds, nc_tasks)
 
     mapped_tasks = mapped_c_tasks + mapped_nc_tasks
-    # print(f'DEBUG_ours___2: {mapped_tasks}')
 
     is_schedulable_nc =  all([t[3] != None for t in mapped_tasks])
     
@@ -40,9 +38,7 @@ def check_schedulable_ours(tasks, delta=1.0, num_core=8):
 
     return is_schedulable, prms, mapped_tasks
 
-
-### Evaluation
-def get_num_task_schedulable_ours(tasks, delta=1.0, num_core=8, max_num_task=40):
+def get_num_task_schedulable_dynamic_switching(tasks, delta=1.0, num_core=8, max_num_task=40):
 
     num_task = 0
     is_schedulable = True
@@ -52,14 +48,14 @@ def get_num_task_schedulable_ours(tasks, delta=1.0, num_core=8, max_num_task=40)
         if num_task > max_num_task:
             break
 
-        is_schedulable, prms, mapped_tasks = check_schedulable_ours(tasks[0:num_task], delta, num_core)
-        # print(f'DEBUG_ours___3: {num_task}')
+        is_schedulable, prms, mapped_tasks = check_schedulable_dynamic_switching(tasks[0:num_task], delta, num_core)
+        # print(f'DEBUG_dynamic_switching___3: {num_task}')
 
     num_task_schedulable = num_task - 1
 
     return num_task_schedulable, prms, mapped_tasks
 
-def assign_critical_tda(core, c_tasks, delta):
+def assign_critical_tda_reserve_rerun(core, c_tasks, delta):
     mapped_tasks = [[] for _ in range(core)]
     modified_list = []
     for task in c_tasks: 
@@ -71,19 +67,24 @@ def assign_critical_tda(core, c_tasks, delta):
         else:
             return False, [], []
 
+
+    # assigned_utils = [sum([t[1]/t[0] for t in tasks]) for tasks in mapped_tasks]
+    # print(f'DEBUG_dynamic_switching:{assigned_utils}')
+    ### check
+
     assigned_utils = []
     for i in range(core):
         assigned_utils.append(0)
         max_exec = 0
-        # largest = mapped_tasks[i][0] if len(mapped_tasks[i]) > 0 else None
+        largest = mapped_tasks[i][0] if len(mapped_tasks[i]) > 0 else None
         for task in mapped_tasks[i]:
             utilization = task[1]/task[0]
             assigned_utils[i] += utilization
-            # if task[1] >= max_exec:
-            #     max_exec = task[1]
-            #     largest = task
-        # if largest != None:
-        #     assigned_utils[i] += largest[1]/largest[0]
+            if task[1] >= max_exec:
+                max_exec = task[1]
+                largest = task
+        if largest != None:
+            assigned_utils[i] += largest[1]/largest[0]
 
     return True, modified_list, assigned_utils
 

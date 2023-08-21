@@ -1,7 +1,7 @@
 import random 
 import json
 import math
-from generator.utils import UUniFastDiscard, SimpleRandom
+from generator.utils import UUniFastDiscard, SimpleRandom, SimpleFixed
 from scipy.stats import loguniform
 from generator.task import Task, TaskSet
 
@@ -10,6 +10,8 @@ def generate_tasksets(cfg):
         tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
     elif cfg["util_gen"] == 'random' : 
         tasksets_util = SimpleRandom(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
+    elif cfg["util_gen"] == 'fixed' : 
+        tasksets_util = SimpleFixed(cfg['num_tasks'], cfg['num_task_sets'], cfg['task_max_utilization'])
     elif cfg["util_gen"] == 'uunifast':
         tasksets_util = UUniFastDiscard(cfg['num_tasks'], cfg['task_set_utilization'], cfg['num_task_sets'], cfg['task_max_utilization'])
     else :
@@ -26,8 +28,10 @@ def generate_tasksets(cfg):
         for task_util in task_set :
             if cfg['period_gen'] == "sampling":
                 period = random.sample(cfg['period'], k=1)[0]
+                # random in list
             elif cfg['period_gen'] == "uniform" :
                 period = random.randint(*cfg['period']) # both included
+                # random in range - uniform dist
             elif cfg['period_gen'] == "log":
                 period = round(loguniform.rvs(*cfg['period']))
             else :

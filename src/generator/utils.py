@@ -33,3 +33,19 @@ def SimpleRandom(n, nsets, max_utils):
     
 
     return sets
+
+def SimpleFixed(n, nsets, max_utils):
+    """
+        Simple Random algorithm
+        generates task with utilization [0, task_max_utilization]
+    """
+    sets = []
+    
+    for _ in range(nsets):
+        utilizations = []
+        for _ in range(n):
+            utilizations.append(max_utils)
+        sets.append(utilizations)
+    
+
+    return sets
