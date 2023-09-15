@@ -1,6 +1,7 @@
 import math
 from core.utils import argmin, argmax
 from prm.demand import Demand
+from generator.task import Task
 
 def assign_nc2PRM(prm_bounds, tasks):
     """
@@ -34,6 +35,13 @@ def assign_nc2PRM(prm_bounds, tasks):
                 remain_utils[index] -= task[1] / task[0]
                 mapped_tasks.append((*task, index))
                 break
+            
+            for t in range(10000):
+                prt_demand = demand.demand(t, index)
+                new_theta = remain_utils[index]*pi
+                prt_supply = 2*(new_theta/pi)*(t-2*(pi-new_theta))
+                print(f'demand and supply : {prt_demand}, {prt_supply}')
+
         else :
             # not schedulable
             mapped_tasks.append((*task, None))
@@ -41,7 +49,38 @@ def assign_nc2PRM(prm_bounds, tasks):
             # print('prm bounds: ', prm_bounds)
             # print('indexs: ', indexs, '\n')
 
+
+
     return prm_params, mapped_tasks
+
+
+def assign_nc_bind(tasks, assigned_utils):
+    binded_tasks = bind_nc_tasks(tasks)
+    heuristic = 'wf'
+    assigned_utils_binded = assigned_utils
+        
+    for task in binded_tasks:
+        if heuristic == 'wf':
+            if min(assigned_utils_binded) + task[] :
+                return None, None, None
+    return True, mapped_tasks, assigned_utils
+
+def bind_nc_tasks(tasks):
+    # make new virtual tasks(Heuristic)
+    binded_tasks
+    sorted_tasks = sorted(tasks, key=lambda x: x[0], reverse=True)
+    num_tasks = len(sorted_tasks)
+    binded_tasks = []
+    for i in range(num_tasks/2 + 1):
+        task_1 = sorted_tasks[2*i]
+        if 2*i+1 < len(sorted_tasks):
+            task_2 = sorted_tasks[2*i+1]
+        else:
+            task_2 = sorted_tasks[2*i]
+
+        binded_tasks.append(Task(min(task_1[0], task_2[0]), max(task_1[1], task_2[1]), 0))
+    
+    return binded_tasks
 
 def get_minimum_theta(t, pi, dbf):
     return (math.sqrt((t-2*pi)**2 + 4*pi*dbf) - (t - 2*pi)) / 4
@@ -52,6 +91,7 @@ def get_optimal_theta(pi, demand):
     for i in range(len(demand.tasks)):
         for point in range(demand.tasks[i][0], lcm([task[0] for task in demand.tasks])+1):
             theta = get_minimum_theta(point, pi, demand.demand(point, i))
+            # print(f'demand at {i} is {demand.demand(point, i)}, supply at {i} is {2*theta/pi*(point-2*(pi-theta))}')
             if theta > maximum_theta:
                 maximum_theta = theta
 

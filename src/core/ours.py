@@ -1,5 +1,5 @@
 import json
-from core.utils import get_minimum_core, get_PRM_bound
+from core.utils import get_minimum_core, get_PRM_bound, argmin, argmax
 from core.task_sche_check import assign_nc2PRM
 from core.tda import tda_analysis
 
@@ -32,6 +32,7 @@ def check_schedulable_ours(tasks, delta=1.0, num_core=8):
     
     is_schedulable = is_schedulable_c & is_schedulable_nc
 
+    # print(f'DEBUG_ours_c_nc: {len(mapped_c_tasks)}, {len(mapped_nc_tasks)}, {assigned_utils}')
 
     return is_schedulable, prms, mapped_tasks
 
@@ -49,7 +50,12 @@ def get_num_task_schedulable_ours(tasks, delta=1.0, num_core=8, max_num_task=40)
 
         is_schedulable, prms, mapped_tasks = check_schedulable_ours(tasks[0:num_task], delta, num_core)
 
-    num_task_schedulable = num_task - 1
+    # num_task_schedulable = num_task - 1
+    num_task_schedulable = len(mapped_tasks)
+    # print("###############################")
+    # print(f'DEBUG_ours_overall: {len(mapped_tasks)}')
+    # print("###############################")
+
 
     return num_task_schedulable, prms, mapped_tasks
 
@@ -76,22 +82,49 @@ def get_num_core_ours(tasks, delta=1.0, max_num_core=16, max_num_task=40):
 
 def assign_critical_tda(core, c_tasks, delta):
     mapped_tasks = [[] for _ in range(core)]
+    heuristic = 'wf'
     modified_list = []
+    assigned_cores = [0.0 for _ in range(core)]
+    index = 0
+    
     for task in c_tasks: 
-        for i in range(core):
-            if tda_analysis(mapped_tasks[i] + [task], delta):
-                mapped_tasks[i].append(task)
-                modified_list.append((*task, i))
-                break
+        ### get index
+        if heuristic == 'wf':
+            if min(assigned_cores) + task[1]/task[0] <= 1:
+                index = argmin(assigned_cores)
+            else:
+                return False, modified_list, assigned_cores
+        elif heuristic == 'bf':
+            print('not implemented')
         else:
-            return False, [], []
-
-    assigned_utils = []
-    for i in range(core):
-        assigned_utils.append(0)
-        max_exec = 0
-        for task in mapped_tasks[i]:
+            raise ValueError("heuristic must be 'wf' or 'bf'")
+        
+        #### tda_analysis
+        if tda_analysis(mapped_tasks[index] + [task], delta):
+            mapped_tasks[index].append(task)
+            modified_list.append((*task, index))
             utilization = task[1]/task[0]
-            assigned_utils[i] += utilization
+            assigned_cores[index] += utilization
+        else:
+            return False, modified_list, assigned_cores
 
-    return True, modified_list, assigned_utils
+    #     for i in range(core):
+    #         if tda_analysis(mapped_tasks[i] + [task], delta):
+    #             mapped_tasks[i].append(task)
+    #             modified_list.append((*task, i))
+    #             break
+    #     else:
+    #         return False, [], []
+
+    # assigned_utils = []
+    # for i in range(core):
+    #     assigned_utils.append(0)
+    #     max_exec = 0
+    #     for task in mapped_tasks[i]:
+    #         utilization = task[1]/task[0]
+    #         assigned_utils[i] += utilization
+
+    # print("!!!!!!!!!!!!!!!!!!OURS!!!!!!!!!!!!!")
+    # print(assigned_cores)
+
+    return True, modified_list, assigned_cores
