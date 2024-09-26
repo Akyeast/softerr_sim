@@ -47,66 +47,6 @@ def exp(tasks, cfg, logger):
             # fault_handling_policy "only_lockstep" / "dynamic_switching" / "ours"
             #################################################################
             
-            # ## only_lockstep
-            # new_num_task_schedulable_only_lockstep, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'only_lockstep',
-            #                                                                             cfg['binding_policy'], cfg['binding_constant'],
-            #                                                                             cfg['partitioning_policy'],
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_only_lockstep = max(num_task_schedulable_only_lockstep, new_num_task_schedulable_only_lockstep)
-
-            # ## dynamic_switching
-            # new_num_task_schedulable_dynamic_switching, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'dynamic_switching',
-            #                                                                             'sort', cfg['binding_constant'],
-            #                                                                             cfg['partitioning_policy'],
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_dynamic_switching = max(num_task_schedulable_dynamic_switching, new_num_task_schedulable_dynamic_switching)
-
-            # new_num_task_schedulable_dynamic_switching_iterative, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'dynamic_switching',
-            #                                                                             'iterative', cfg['binding_constant'],
-            #                                                                             cfg['partitioning_policy'],
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_dynamic_switching_iterative = max(num_task_schedulable_dynamic_switching_iterative, new_num_task_schedulable_dynamic_switching_iterative)
-
-            ## ours
-            # new_num_task_schedulable_ours, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'ours',
-            #                                                                             'sort', cfg['binding_constant'],
-            #                                                                             cfg['partitioning_policy'],
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_ours = max(num_task_schedulable_ours, new_num_task_schedulable_ours)
-            # start_time_worstfit_sort = time.time()
-            # new_num_task_schedulable_ours, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'ours',
-            #                                                                             'sort', cfg['binding_constant'],
-            #                                                                             'worstfit',
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_ours = max(num_task_schedulable_ours, new_num_task_schedulable_ours)
-            # end_time_worstfit_sort = time.time()
-            # elapsed_time_worstfit_sort = end_time_worstfit_sort - start_time_worstfit_sort
-
-            # start_time_worstfit_iterative = time.time()
-            # new_num_task_schedulable_ours_iterative, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'ours',
-            #                                                                             'iterative', cfg['binding_constant'],
-            #                                                                             'worstfit',
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_ours_iterative = max(num_task_schedulable_ours_iterative, new_num_task_schedulable_ours_iterative)
-            # end_time_worstfit_iterative = time.time()
-            # elapsed_time_worstfit_iterative = end_time_worstfit_iterative - start_time_worstfit_iterative
-
-            # start_time_transform_sort = time.time()
-            # new_num_task_schedulable_ours_transform, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
-            #                                                                             'ours',
-            #                                                                             'sort', cfg['binding_constant'],
-            #                                                                             'transform',
-            #                                                                             cfg['transform_constant'], cfg)
-            # num_task_schedulable_ours_transform = max(num_task_schedulable_ours_transform, new_num_task_schedulable_ours_transform)
-            # end_time_transform_sort = time.time()
-            # elapsed_time_transform_sort = end_time_transform_sort - start_time_transform_sort
-            
             new_num_task_schedulable_ours_transform_05, _, _ = get_num_task_schedulable(state_ts, cfg['num_core'], cfg['max_num_task'],
                                                                                         'ours',
                                                                                         'sort', cfg['binding_constant'],

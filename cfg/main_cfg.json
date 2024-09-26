@@ -1,7 +1,7 @@
 {
     "num_task_sets": 1000,
 
-    "critical_prob_list": [0.1, 0.3, 0.5, 0.7, 0.9],
+    "critical_prob_list": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
     "criticality_per_state": false,
     "period": [10, 50],
     "num_states_list": [1],
@@ -19,5 +19,5 @@
     "binding_policy": "sort",
     "binding_constant": 0.1,
     "partitioning_policy": "worstfit",
-    "transform_constant": 0.1
+    "partitioning_constant": 0.1
 }
