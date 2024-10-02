@@ -62,8 +62,6 @@ def check_deadline_miss(tasks, busy_period):
         D_i=T_i
         
         for a in range(busy_period + 1):
-            deadline_miss = False
-            
             for t in range(a, busy_period + 1):
                 workload = 0
                 
@@ -81,15 +79,12 @@ def check_deadline_miss(tasks, busy_period):
                 # Task i의 워크로드 계산
                 workload += delta_i(a, t, T_i) * C_i
                 
-                # 데드라인 미스 발생 여부 판단
-                if workload > a+D_i:
-                    missed_deadline_tasks.append((task, a))
-                    deadline_miss = True
-                    break
-            
-            if deadline_miss:
+            # 데드라인 미스 발생 여부 판단
+            # print(workload, a+D_i)
+            if workload > a+D_i:
+                missed_deadline_tasks.append((task, a))
                 break
-
+                
     return missed_deadline_tasks
 
 
