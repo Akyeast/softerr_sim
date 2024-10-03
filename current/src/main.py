@@ -25,7 +25,7 @@ def generate_random_task_set(num_tasks, period_range, exec_time_range, diff):
                 "index": i,
                 "period": period,
                 "execution_time": execution_time,
-                "diff" : diff[0]
+                "diff" : diff
             })
         
         if total_utilization <= 1:
