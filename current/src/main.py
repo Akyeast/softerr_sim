@@ -11,7 +11,7 @@ def load_config(config_file):
     return config
 
 # 랜덤 태스크 셋 생성 함수
-def generate_random_task_set(num_tasks, num_C_tasks, period_range, exec_time_range, diff):
+def generate_random_task_set(num_tasks, num_C_tasks, period_range, exec_time_range):
     if num_C_tasks>num_tasks: print("check task num")
     while True:
         tasks = []
@@ -22,12 +22,18 @@ def generate_random_task_set(num_tasks, num_C_tasks, period_range, exec_time_ran
             execution_time = random.randint(exec_time_range[0], exec_time_range[1])
             task_utilization = execution_time / period
             total_utilization += task_utilization
-            tasks.append({
+            taskinfo={
                 "index": i,
                 "period": period,
                 "execution_time": execution_time,
                 "diff" : 0
-            })
+            }
+            if num_C_tasks>0:
+                taskinfo["critical_task"]=True
+                num_C_tasks-=1
+            else:
+                taskinfo["critical_task"]=False
+            tasks.append(taskinfo)
         
         if total_utilization <= 1:
             break
@@ -56,10 +62,18 @@ def delta_i(a, t, T_i):
 
 
 # 데드라인 미스 체크 함수
-def check_deadline_miss(tasks, target_task_idx, busy_period):
+def check_deadline_miss(tasks, busy_period):
+    missed_deadline_tasks=[]
+    for task_idx, task in enumerate(tasks):
+        miss_tasks=check_deadline_miss_single_task(tasks, task_idx, busy_period)
+        if miss_tasks!=[]:
+            missed_deadline_tasks.append(miss_tasks)
+    return missed_deadline_tasks
+
+def check_deadline_miss_single_task(tasks, rerun_task_idx, busy_period):
     missed_deadline_tasks = []
     for task_idx, task in enumerate(tasks):
-        if target_task_idx == task_idx:
+        if rerun_task_idx == task_idx:
             task["diff"]=task["execution_time"]
 
 
@@ -90,9 +104,10 @@ def check_deadline_miss(tasks, target_task_idx, busy_period):
             # 데드라인 미스 발생 여부 판단
             # print(workload, a+D_i)
             if workload > a+D_i:
+                print(task)
+                print(a)
                 missed_deadline_tasks.append((task, a))
-                break
-                
+                break        
     return missed_deadline_tasks
 
 def visualize_schedule(tasks, max_time):
@@ -162,10 +177,9 @@ def main(config_file):
     num_C_tasks = config['num_C_tasks']
     period_range = config['period_range']
     execution_time_range = config['execution_time_range']
-    diff = config['diff']
 
     # 랜덤 태스크 셋 생성
-    tasks = generate_random_task_set(num_tasks, num_C_tasks, period_range, execution_time_range, diff)
+    tasks = generate_random_task_set(num_tasks, num_C_tasks, period_range, execution_time_range)
     # tasks= [{'index': 0, 'period': 80, 'execution_time': 13, 'diff': 5}, {'index': 1, 'period': 93, 'execution_time': 6, 'diff': 5}, {'index': 2, 'period': 99, 'execution_time': 7, 'diff': 5}, {'index': 3, 'period': 78, 'execution_time': 7, 'diff': 5}, {'index': 4, 'period': 100, 'execution_time': 7, 'diff': 5}, {'index': 5, 'period': 85, 'execution_time': 7, 'diff': 5}, {'index': 6, 'period': 78, 'execution_time': 8, 'diff': 5}, {'index': 7, 'period': 76, 'execution_time': 9, 'diff': 5}, {'index': 8, 'period': 77, 'execution_time': 9, 'diff': 5}, {'index': 9, 'period': 80, 'execution_time': 9, 'diff': 5}]
     # # 태스크 정보 출력
     for i, task in enumerate(tasks):
@@ -175,7 +189,7 @@ def main(config_file):
     busy_period = calculate_busy_period(tasks)
     print(f"Calculated Maximum Busy Period: {busy_period}")
 
-    # visualize_schedule(tasks, min(busy_period, 10*tasks[0]['period']))
+    visualize_schedule(tasks, min(busy_period, 10*tasks[0]['period']))
 
     missed_deadline_tasks=check_deadline_miss(tasks, busy_period)
     if missed_deadline_tasks==[]:
@@ -186,5 +200,5 @@ def main(config_file):
 
 if __name__ == "__main__":
     # config.json 파일 경로
-    config_file = os.path.join(os.path.dirname(__file__), '..', 'cfg', 'config.json')
+    config_file = os.path.join(os.path.dirname(__file__), '..', 'cfg', 'config_hard.json')
     main(config_file)
