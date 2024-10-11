@@ -1,0 +1,7 @@
+{
+    "num_tasks": 5,
+    "num_C_tasks": 2,
+    "period_range": [20,22],
+    "execution_time_range": [3, 4]
+}
+  

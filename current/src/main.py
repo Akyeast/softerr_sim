@@ -3,6 +3,7 @@ import random
 import os
 import math
 import matplotlib.pyplot as plt
+import copy
 
 # JSON 파일에서 태스크 범위 정보 불러오기
 def load_config(config_file):
@@ -11,111 +12,175 @@ def load_config(config_file):
     return config
 
 # 랜덤 태스크 셋 생성 함수
-def generate_random_task_set(num_tasks, num_C_tasks, period_range, exec_time_range):
-    if num_C_tasks>num_tasks: print("check task num")
-    while True:
-        tasks = []
-        total_utilization = 0
-        
-        for i in range(num_tasks):
-            period = random.randint(period_range[0], period_range[1])
-            execution_time = random.randint(exec_time_range[0], exec_time_range[1])
-            task_utilization = execution_time / period
-            total_utilization += task_utilization
-            taskinfo={
-                "index": i,
-                "period": period,
-                "execution_time": execution_time,
-                "diff" : 0
-            }
-            if num_C_tasks>0:
-                taskinfo["critical_task"]=True
-                num_C_tasks-=1
-            else:
-                taskinfo["critical_task"]=False
-            tasks.append(taskinfo)
-        
-        if total_utilization <= 1:
-            break
-        else:
-            print(f"Total Utilization exceeded 1 ({total_utilization}), regenerating task set...")
+def generate_random_task_set(num_tasks, period_range, exec_time_range, critical_p):
+    tasks = []
+    for i in range(num_tasks):
+        period = random.randint(period_range[0], period_range[1])
+        execution_time = random.randint(exec_time_range[0], exec_time_range[1])
+        critical = random.random() < critical_p
+        task={
+            "index": i,
+            "period": period,
+            "execution_time": execution_time,
+            "deadline" : period,
+            "critical" : critical
+        }
+        tasks.append(task)
     return tasks
 
+def find_longest_critical_task_e(tasks):
+    critical_tasks = [task for task in tasks if task["critical"]]
+    if not critical_tasks:
+        return 0
+    longest_task = max(critical_tasks, key=lambda task: task["execution_time"])
+    return longest_task["execution_time"]
+
 # Busy Period 계산 함수 (EDF 기준)
-def calculate_busy_period(tasks):
-    busy_period = sum(task["execution_time"] for task in tasks)
-    while True:
-        workload = sum((busy_period // task["period"]+1) * task["execution_time"] for task in tasks)
+def L_max(tasks):
+    # longest_c_e=find_longest_critical_task_e(tasks)
+    longest_c_e=0
+    busy_period = sum(task["execution_time"] for task in tasks)+longest_c_e
+    while(True):
+        workload = sum(((busy_period//task["period"] +1) * task["execution_time"]) for task in tasks)+longest_c_e
         if workload == busy_period:
             break
         busy_period = workload
+    print("busy_period", busy_period)
+    return 30
     return busy_period
+def s_i(phi, p_i):
+    return phi - math.floor(phi / p_i) * p_i
+def W_i_all(tasks, i, phi, t):
+    total_workload=0
+    for task_idx, task in enumerate(tasks):
+        if task_idx==i:
+            p_i = task["period"]
+            e_i = task["execution_time"]
+            d_i = task["deadline"]
+            break
+    else:
+        print("Task idx error")
+        return 0
 
-def s_i(a, T_i):
-    return a - math.floor(a / T_i) * T_i
+    total_workload+=W_i(phi, t, p_i, e_i)
 
-def delta_i(a, t, T_i):
-    s_i_a = s_i(a, T_i)
-    if t > s_i_a:
-        return min(math.ceil((t - s_i_a) / T_i), 1 + math.floor(a / T_i))
+    for other_task_idx, other_task in enumerate(tasks):
+        if other_task_idx != task_idx:
+            p_j = other_task["period"]
+            e_j = other_task["execution_time"]
+            d_j = other_task["deadline"]
+            total_workload += W_j(phi, t, p_j, e_j, d_i, d_j)
+    
+    return total_workload
+def W_i(phi, t, p_i, e_i):
+    s_i_phi = s_i(phi, p_i)
+    if t > s_i_phi:
+        return min(math.ceil((t - s_i_phi) / p_i), 1 + math.floor(phi / p_i))*e_i
     return 0
+def W_j(phi, t, p_j, e_j, d_i, d_j):
+    return min(math.ceil(t / p_j), 1 + math.floor((phi + d_i - d_j) / p_j)) * e_j 
+def L_i(tasks, i, phi):
+    L_prev=-1
+    L_curr=W_i_all(tasks, i, phi, 1)
+    while(L_prev!=L_curr):
+        L_prev=L_curr
+        L_curr=W_i_all(tasks, i, phi, L_prev)
+    return L_curr
 
+        # if rerun_task_idx == task_idx:
+        #     task["deadline"]=task["period"]-task["execution_time"]
 
-# 데드라인 미스 체크 함수
-def check_deadline_miss(tasks, busy_period):
-    missed_deadline_tasks=[]
-    for task_idx, task in enumerate(tasks):
-        miss_tasks=check_deadline_miss_single_task(tasks, task_idx, busy_period)
-        if miss_tasks!=[]:
-            missed_deadline_tasks.append(miss_tasks)
-    return missed_deadline_tasks
-
-def check_deadline_miss_single_task(tasks, rerun_task_idx, busy_period):
+# 데드라인 미스 체크
+def check_deadline_miss(tasks, busy_period, rerun_idx):
     missed_deadline_tasks = []
-    for task_idx, task in enumerate(tasks):
-        if rerun_task_idx == task_idx:
-            task["diff"]=task["execution_time"]
+    rerun_e = 0
 
-
+    for task in tasks:
+        if task['index'] == rerun_idx:
+            rerun_e = task["execution_time"]
+            break
     
     for task_idx, task in enumerate(tasks):
-        T_i = task["period"]
-        C_i = task["execution_time"]
-        D_i=T_i-task["diff"]
-        
-        for a in range(busy_period + 1):
-            for t in range(a, busy_period + 1):
-                workload = 0
-                
-                for other_task_idx, other_task in enumerate(tasks):
-                    if other_task_idx != task_idx:
-                        T_j = other_task["period"]
-                        C_j = other_task["execution_time"]
-                        D_j = T_j-other_task["diff"]
-                        
-                        workload += min(
-                            math.ceil(t / T_j),
-                            1 + math.floor((a + D_i - D_j) / T_j)
-                        ) * C_j
-                
-                # Task i의 워크로드 계산
-                workload += delta_i(a, t, T_i) * C_i
+        for phi in range(busy_period + 1):
+            workload=L_i(tasks, task_idx, phi)
                 
             # 데드라인 미스 발생 여부 판단
-            # print(workload, a+D_i)
-            if workload > a+D_i:
+            # print(workload, phi+task["deadline"])
+            if workload+rerun_e > phi+task["deadline"]:
                 print(task)
-                print(a)
-                missed_deadline_tasks.append((task, a))
+                print(phi)
+                missed_deadline_tasks.append((task, phi))
                 break        
     return missed_deadline_tasks
+
+def calculate_max_tasks(tasks, rerun_idx): # tasks 받아서 크리티컬 먼저 넣고 논크리티컬 넣으면서 몇개까지 들어가나 세서 반환
+    core_U=[0,0,0,0]
+    core_assignments = [[],[],[],[]]
+    critical_tasks = [task for task in tasks if task["critical"]]
+    non_critical_tasks = [task for task in tasks if not task["critical"]]
+
+    for task_idx, task in enumerate(critical_tasks):
+        task_U = task["execution_time"] / task["period"]
+        worst_core = core_U.index(min(core_U))
+        core_assignments[worst_core].append(task)
+        core_U[worst_core] += task_U
+        if core_U[worst_core]>1:
+            print("U already exceeded 1 in critical tasks")
+            return -1
+        
+    for task_idx, task in enumerate(non_critical_tasks):
+        task_U = task["execution_time"] / task["period"]
+        worst_core = core_U.index(min(core_U))
+        core_assignments[worst_core].append(task)
+        core_U[worst_core] += task_U
+        if core_U[worst_core]>1:
+            print("U exceeded 1")
+            return -1
+        busy_period=L_max(core_assignments[worst_core])
+        # print("busy period: ", busy_period)
+        missed_deadline_tasks=check_deadline_miss(core_assignments[worst_core], busy_period, rerun_idx)
+        if missed_deadline_tasks!=[]:
+            print("Schedulability test fail! escape")
+            print("U:", core_U)
+            return task_idx
+    return 0
+
+def calculate_max_tasks_default(tasks):
+    for i in range(len(tasks)):
+        print("Task", i+1, "start")
+        
+        # rerun X
+        result=calculate_max_tasks(tasks[:i+1], -1)
+        if result==0:
+            pass
+        elif result==-1:
+            print("Ubreak, Success until : ", i)
+            break
+        else:
+            print("Success until : ", i)
+            break
+
+        # rerun O
+        critical_tasks = [task for task in tasks[:i+1] if task["critical"]]
+        for c_task in critical_tasks:
+            rerun_idx=c_task["index"]
+
+            result=calculate_max_tasks(tasks[:i+1], rerun_idx)
+            if result==0:
+                pass
+            elif result==-1:
+                print("Ubreak, Success until : ", result)
+                return
+            else:
+                print("Our break, Success until : ", result)
+                return
 
 def visualize_schedule(tasks, max_time):
     timeline = []  # 스케줄 타임라인 저장
     time = 0       # 현재 시간
     task_colors = {}  # 각 태스크의 색상 저장
     task_indices = {task["index"]: idx for idx, task in enumerate(tasks)}  # 태스크의 인덱스 저장
-    original_tasks = {task["index"]: (task["period"], task["execution_time"], task["diff"]) for task in tasks}  # 주기와 데드라인 저장
+    original_tasks = {task["index"]: (task["period"], task["execution_time"], task["deadline"]) for task in tasks}  # 주기와 데드라인 저장
 
     # 색상을 고유하게 지정하기 위한 기본 색상 리스트
     colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray']
@@ -156,8 +221,8 @@ def visualize_schedule(tasks, max_time):
         ax.broken_barh([(start_time, 1)], (task_indices[task_id] * 10, 9), facecolors=task_colors[task_id])
 
     # 데드라인 및 주기 정보 표시
-    for task, (period, execution_time, diff) in original_tasks.items():
-        ax.annotate(f'Period: {period}, Deadline: {period - diff}', (max_time + 1, task_indices[task] * 10), xycoords='data')
+    for task, (period, execution_time, deadline) in original_tasks.items():
+        ax.annotate(f'Period: {period}, Deadline: {deadline}', (max_time + 1, task_indices[task] * 10), xycoords='data')
 
     ax.set_xlabel('Time')
     ax.set_ylabel('Tasks')
@@ -174,31 +239,23 @@ def main(config_file):
     config = load_config(config_file)
     
     num_tasks = config['num_tasks']
-    num_C_tasks = config['num_C_tasks']
     period_range = config['period_range']
     execution_time_range = config['execution_time_range']
 
     # 랜덤 태스크 셋 생성
-    tasks = generate_random_task_set(num_tasks, num_C_tasks, period_range, execution_time_range)
-    # tasks= [{'index': 0, 'period': 80, 'execution_time': 13, 'diff': 5}, {'index': 1, 'period': 93, 'execution_time': 6, 'diff': 5}, {'index': 2, 'period': 99, 'execution_time': 7, 'diff': 5}, {'index': 3, 'period': 78, 'execution_time': 7, 'diff': 5}, {'index': 4, 'period': 100, 'execution_time': 7, 'diff': 5}, {'index': 5, 'period': 85, 'execution_time': 7, 'diff': 5}, {'index': 6, 'period': 78, 'execution_time': 8, 'diff': 5}, {'index': 7, 'period': 76, 'execution_time': 9, 'diff': 5}, {'index': 8, 'period': 77, 'execution_time': 9, 'diff': 5}, {'index': 9, 'period': 80, 'execution_time': 9, 'diff': 5}]
-    # # 태스크 정보 출력
-    for i, task in enumerate(tasks):
-        print(f"Task {i+1} - Period: {task['period']}, Execution Time: {task['execution_time']}")
+    tasks = generate_random_task_set(num_tasks, period_range, execution_time_range, 0.2)
+
+    # for i, task in enumerate(tasks):
+    #     print(f"Task {i+1} - Period: {task['period']}, Execution Time: {task['execution_time']}, Deadline: {task['deadline']}, Critical: {task['critical']}")
+
+    calculate_max_tasks_default(tasks)
     
-    # Max Busy Period 계산
-    busy_period = calculate_busy_period(tasks)
-    print(f"Calculated Maximum Busy Period: {busy_period}")
+    # visualize_schedule(tasks, min(busy_period, 10*tasks[0]['period']))
 
-    visualize_schedule(tasks, min(busy_period, 10*tasks[0]['period']))
-
-    missed_deadline_tasks=check_deadline_miss(tasks, busy_period)
-    if missed_deadline_tasks==[]:
-        print("Successed deadline check")
-    else:
-        print("Fail!")
-        print(missed_deadline_tasks)
 
 if __name__ == "__main__":
+
+
     # config.json 파일 경로
     config_file = os.path.join(os.path.dirname(__file__), '..', 'cfg', 'config_hard.json')
     main(config_file)

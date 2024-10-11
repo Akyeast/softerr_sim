@@ -138,4 +138,4 @@
 !*/*/
 !*.py
 
-!current/*.json
+!current/cfg/*.json
