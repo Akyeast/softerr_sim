@@ -11,12 +11,17 @@ def load_config(config_file):
         config = json.load(f)
     return config
 
+def log_uniform(a, b):
+    log_a = math.log(a)
+    log_b = math.log(b)
+    return math.exp(random.uniform(log_a, log_b))
+
 # 랜덤 태스크 셋 생성 함수
-def generate_random_task_set(num_tasks, period_range, exec_time_range, critical_p):
+def generate_random_task_set(num_tasks, period_range, utilization_range, critical_p):
     tasks = []
     for i in range(num_tasks):
-        period = random.randint(period_range[0], period_range[1])
-        execution_time = random.randint(exec_time_range[0], exec_time_range[1])
+        period = math.floor(log_uniform(period_range[0], period_range[1]))
+        execution_time = math.floor(log_uniform(utilization_range[0], utilization_range[1])*period)
         critical = random.random() < critical_p
         task={
             "index": i,
@@ -44,9 +49,10 @@ def L_max(tasks):
         workload = sum(((busy_period//task["period"] +1) * task["execution_time"]) for task in tasks)+longest_c_e
         if workload == busy_period:
             break
+        if workload >=500:
+            return 500
         busy_period = workload
-    print("busy_period", busy_period)
-    return 30
+    # return 30
     return busy_period
 def s_i(phi, p_i):
     return phi - math.floor(phi / p_i) * p_i
@@ -107,8 +113,8 @@ def check_deadline_miss(tasks, busy_period, rerun_idx):
             # 데드라인 미스 발생 여부 판단
             # print(workload, phi+task["deadline"])
             if workload+rerun_e > phi+task["deadline"]:
-                print(task)
-                print(phi)
+                # print(task)
+                # print(phi)
                 missed_deadline_tasks.append((task, phi))
                 break        
     return missed_deadline_tasks
@@ -125,8 +131,12 @@ def calculate_max_tasks(tasks, rerun_idx): # tasks 받아서 크리티컬 먼저
         core_assignments[worst_core].append(task)
         core_U[worst_core] += task_U
         if core_U[worst_core]>1:
-            print("U already exceeded 1 in critical tasks")
+            # print("U already exceeded 1 in critical tasks")
             return -1
+        busy_period=L_max(core_assignments[worst_core])
+        missed_deadline_tasks=check_deadline_miss(core_assignments[worst_core], busy_period, rerun_idx)
+        if missed_deadline_tasks!=[]:
+            return task_idx
         
     for task_idx, task in enumerate(non_critical_tasks):
         task_U = task["execution_time"] / task["period"]
@@ -134,31 +144,31 @@ def calculate_max_tasks(tasks, rerun_idx): # tasks 받아서 크리티컬 먼저
         core_assignments[worst_core].append(task)
         core_U[worst_core] += task_U
         if core_U[worst_core]>1:
-            print("U exceeded 1")
+            # print("U exceeded 1")
             return -1
         busy_period=L_max(core_assignments[worst_core])
         # print("busy period: ", busy_period)
         missed_deadline_tasks=check_deadline_miss(core_assignments[worst_core], busy_period, rerun_idx)
         if missed_deadline_tasks!=[]:
-            print("Schedulability test fail! escape")
-            print("U:", core_U)
+            # print("Schedulability test fail! escape")
+            # print("U:", core_U)
             return task_idx
     return 0
 
 def calculate_max_tasks_default(tasks):
     for i in range(len(tasks)):
-        print("Task", i+1, "start")
+        # print("Task", i+1, "start")
         
         # rerun X
         result=calculate_max_tasks(tasks[:i+1], -1)
         if result==0:
             pass
         elif result==-1:
-            print("Ubreak, Success until : ", i)
-            break
+            # print("U break, Success until : ", i)
+            return i
         else:
-            print("Success until : ", i)
-            break
+            # print("Our break, Success until : ", i)
+            return i
 
         # rerun O
         critical_tasks = [task for task in tasks[:i+1] if task["critical"]]
@@ -169,11 +179,11 @@ def calculate_max_tasks_default(tasks):
             if result==0:
                 pass
             elif result==-1:
-                print("Ubreak, Success until : ", result)
-                return
+                # print("U break at rerun, Success until : ", i)
+                return i
             else:
-                print("Our break, Success until : ", result)
-                return
+                # print("Our break at rerun, Success until : ", i)
+                return i
 
 def visualize_schedule(tasks, max_time):
     timeline = []  # 스케줄 타임라인 저장
@@ -234,22 +244,47 @@ def visualize_schedule(tasks, max_time):
 
     plt.show()
 
+def visualize_task_limit(task_limits, critical_ratio_num):
+    plt.figure(figsize=(8, 6))
+    plt.plot([i / critical_ratio_num for i in range(critical_ratio_num + 1)], task_limits, 'o-', label='Task Limit')
+    plt.xlabel('Critical Ratio')
+    plt.ylabel('Task Limit')
+    plt.title('Task Limit Based on Critical Ratio')
+    plt.grid(True)
+    plt.legend()
+    # 그래프 출력
+    # plt.show()
+    plt.savefig('task_limit_based_on_critical_ratio.png')
+    plt.show()
+
 # 실행
 def main(config_file):
     config = load_config(config_file)
     
     num_tasks = config['num_tasks']
     period_range = config['period_range']
-    execution_time_range = config['execution_time_range']
+    utilization_range = config['utilization_range']
 
-    # 랜덤 태스크 셋 생성
-    tasks = generate_random_task_set(num_tasks, period_range, execution_time_range, 0.2)
 
-    # for i, task in enumerate(tasks):
-    #     print(f"Task {i+1} - Period: {task['period']}, Execution Time: {task['execution_time']}, Deadline: {task['deadline']}, Critical: {task['critical']}")
+    critical_ratio_num=100
+    exp_per_critical_ratio=100
+    task_limits=[]
+    for i in range(critical_ratio_num+1):
+        critical_ratio=i/critical_ratio_num
 
-    calculate_max_tasks_default(tasks)
-    
+        max_task=[]
+        # 랜덤 태스크 셋 생성
+        for i in range(exp_per_critical_ratio):
+            tasks = generate_random_task_set(num_tasks, period_range, utilization_range, critical_ratio)
+            # for i, task in enumerate(tasks):
+            #     print(f"Task {i+1} - Period: {task['period']}, Execution Time: {task['execution_time']}, Deadline: {task['deadline']}, Critical: {task['critical']}")
+            max_task.append(calculate_max_tasks_default(tasks))
+        # print(max_task)
+        task_limit=sum(max_task)/len(max_task)
+        print("critical ratio :", critical_ratio, "task limit :", task_limit)
+        task_limits.append(task_limit)
+
+    visualize_task_limit(task_limits, critical_ratio_num)
     # visualize_schedule(tasks, min(busy_period, 10*tasks[0]['period']))
 
 
