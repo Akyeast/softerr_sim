@@ -26,7 +26,7 @@ def main(config_file):
     utilization_range = config['utilization_range']
 
     critical_ratio_num=10
-    exp_per_critical_ratio=50
+    exp_per_critical_ratio=10
 
     task_limits_default=[]
     task_limits_binded=[]

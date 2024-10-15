@@ -13,6 +13,7 @@ def random_task_set(num_tasks, period_range, utilization_range, critical_p):
             "period": period,
             "execution_time": execution_time,
             "deadline" : period,
+            "vertual_deadline" : (execution_time+(period-execution_time))/2,
             "critical" : critical
         }
         tasks.append(task)

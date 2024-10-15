@@ -34,16 +34,14 @@ def W_i(phi, t, p_i, e_i):
 def W_j(phi, t, p_j, e_j, d_i, d_j):
     return min(math.ceil(t / p_j), 1 + math.floor((phi + d_i - d_j) / p_j)) * e_j 
 
-def L_i(tasks, i, phi):
+def L_i(tasks, i, phi, rerun_e):
     L_prev=-1
-    L_curr=W_i_all(tasks, i, phi, 1)
+    L_curr=W_i_all(tasks, i, phi, 1)+rerun_e
     while(L_prev!=L_curr):
         L_prev=L_curr
-        L_curr=W_i_all(tasks, i, phi, L_prev)
+        L_curr=W_i_all(tasks, i, phi, L_prev)+rerun_e
     return L_curr
 
-        # if rerun_task_idx == task_idx:
-        #     task["deadline"]=task["period"]-task["execution_time"]
 
 
 # 데드라인 미스 체크
@@ -57,10 +55,11 @@ def check_deadline_miss(tasks, busy_period, rerun_idx):
     
     for task_idx, task in enumerate(tasks):
         for phi in range(busy_period + 1):
-            workload=L_i(tasks, task_idx, phi)
+            rerunX_workload=L_i(tasks, task_idx, phi, 0)
+            rerunO_workload=L_i(tasks, task_idx, phi, rerun_e)
                 
             # 데드라인 미스 발생 여부 판단
             # print(workload, phi+task["deadline"])
-            if workload+rerun_e > phi+task["deadline"]:
+            if rerunX_workload > phi+task["vertual_deadline"] or rerunO_workload > phi+task["deadline"]:
                 return True    
     return False

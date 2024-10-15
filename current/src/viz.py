@@ -7,7 +7,9 @@ def visualize_task_limit(data, critical_ratio_num, period_range, utilization_ran
     plt.plot([i / critical_ratio_num for i in range(critical_ratio_num + 1)], data[1], 'o-', label='Binding')
     plt.xlabel('Critical Ratio')
     plt.ylabel('Task Limit')
-    plt.title('Task Limit Based on Critical Ratio')
+    plt.xlim(bottom=0)
+    plt.ylim(top=max(data[0]+data[1])+5)
+    plt.title(f'period_{period_range}_util_{utilization_range}')
     plt.grid(True)
     plt.legend()
     # 그래프 출력

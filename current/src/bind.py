@@ -15,6 +15,7 @@ def bind_task(a, b):
             "period": period,
             "execution_time": execution_time,
             "deadline" : period,
+            "vertual_deadline" : (execution_time+(period-execution_time))/2,
             "critical" : False
         }
     return task

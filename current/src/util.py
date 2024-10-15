@@ -16,9 +16,9 @@ def L_max(tasks):
         workload = sum(((busy_period//task["period"] +1) * task["execution_time"]) for task in tasks)+longest_c_e
         if workload == busy_period:
             break
-        if workload >=150:
+        if workload >=300:
             # print("ex150")
-            return 150
+            return 300
         busy_period = workload
     return busy_period
 
